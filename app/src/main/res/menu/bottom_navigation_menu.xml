@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/page_1"
+        android:enabled="true"
+        android:title="Test 1"
+        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+    <item
+        android:id="@+id/page_2"
+        android:enabled="true"
+        android:title="Test 2"
+        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+</menu>
