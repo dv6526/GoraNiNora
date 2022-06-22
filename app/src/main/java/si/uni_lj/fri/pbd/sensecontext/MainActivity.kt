@@ -1,23 +1,13 @@
 package si.uni_lj.fri.pbd.sensecontext
 
-import android.app.ActivityManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.ActivityTransition
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import si.uni_lj.fri.pbd.sensecontext.ForegroundService.Companion.ACTION_START
-import si.uni_lj.fri.pbd.sensecontext.Receivers.TransitionReceiver
+import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -29,13 +19,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navigation: BottomNavigationView
     private lateinit var binding: ActivityMainBinding
     private var serviceStarted : Boolean = false
-    private lateinit var receiver: TransitionReceiver
+    private lateinit var receiverDetected: DetectedTransitionReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        receiver = TransitionReceiver()
+        receiverDetected = DetectedTransitionReceiver()
 
         setContentView(binding.root)
         replaceFragment(HomeFragment())
@@ -88,12 +78,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(receiver, IntentFilter(TRANSITION_RECEIVER_ACTION))
+        registerReceiver(receiverDetected, IntentFilter(TRANSITION_RECEIVER_ACTION))
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(receiver)
+        unregisterReceiver(receiverDetected)
     }
 
 }

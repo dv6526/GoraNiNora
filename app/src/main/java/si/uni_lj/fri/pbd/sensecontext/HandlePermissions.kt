@@ -19,8 +19,9 @@ fun MainActivity.requestPermission() {
 }
 
 fun MainActivity.isPermissionGranted(): Boolean {
-    //  TODO 2: For a device running on the Android Q or later, request permission
-    //          For a device running on the system lower than Android Q, return true
+
+    //   For a device running on the system lower than Android Q, return true
+    //  For a device running on the Android Q or later, request permission
 
     return if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
         true

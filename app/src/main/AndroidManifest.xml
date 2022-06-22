@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
         <receiver
-            android:name=".Receivers.TransitionReceiver"
+            android:name=".Receivers.DetectedTransitionReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
 
