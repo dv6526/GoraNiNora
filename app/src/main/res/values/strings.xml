@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SenseContext</string>
     <string name="channel_name">Sensing data</string>
+    <string name="channel_description">data</string>
+
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

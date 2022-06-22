@@ -76,14 +76,6 @@ class MainActivity : AppCompatActivity() {
         requestActivityTransitionUpdates()
     }
 
-    override fun onResume() {
-        super.onResume()
-        registerReceiver(receiverDetected, IntentFilter(TRANSITION_RECEIVER_ACTION))
-    }
 
-    override fun onPause() {
-        super.onPause()
-        unregisterReceiver(receiverDetected)
-    }
 
 }
