@@ -1,13 +1,16 @@
 package si.uni_lj.fri.pbd.sensecontext
 
-import android.content.IntentFilter
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import si.uni_lj.fri.pbd.sensecontext.Fragments.HomeFragment
+import si.uni_lj.fri.pbd.sensecontext.Fragments.SensorsFragment
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
+import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -19,13 +22,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navigation: BottomNavigationView
     private lateinit var binding: ActivityMainBinding
     private var serviceStarted : Boolean = false
-    private lateinit var receiverDetected: DetectedTransitionReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        receiverDetected = DetectedTransitionReceiver()
+
 
         setContentView(binding.root)
         replaceFragment(HomeFragment())
@@ -40,6 +42,9 @@ class MainActivity : AppCompatActivity() {
                     //check for permissions
                     if (isPermissionGranted()) {
                         setActivityTransitionDetection()
+
+
+
                     } else {
                         requestPermission()
                     }
@@ -74,6 +79,10 @@ class MainActivity : AppCompatActivity() {
     private fun setActivityTransitionDetection() {
         Log.d(TAG, "Starting activity recognition...")
         requestActivityTransitionUpdates()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
 

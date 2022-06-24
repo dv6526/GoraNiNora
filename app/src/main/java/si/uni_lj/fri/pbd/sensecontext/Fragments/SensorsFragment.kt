@@ -1,10 +1,11 @@
-package si.uni_lj.fri.pbd.sensecontext
+package si.uni_lj.fri.pbd.sensecontext.Fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import si.uni_lj.fri.pbd.sensecontext.R
 
 
 class SensorsFragment : Fragment() {

@@ -14,9 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
         <receiver
-            android:name=".Receivers.DetectedTransitionReceiver"
+            android:name=".Receivers.DetectedActivityReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
+
+        <service
+            android:name=".Services.ActivitySamplingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".Receivers.DetectedTransitionReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
         <service
             android:name=".ForegroundService"

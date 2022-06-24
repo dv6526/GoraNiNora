@@ -16,10 +16,7 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import si.uni_lj.fri.pbd.sensecontext.R
-
-import si.uni_lj.fri.pbd.sensecontext.pendingIntent
-import si.uni_lj.fri.pbd.sensecontext.requestActivityTransitionUpdates
-import java.lang.IllegalArgumentException
+import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,6 +36,17 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                             " (${fromTransitionType(event.transitionType)}) " +
                             SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
                     output.append(info)
+                    // when user is walking request Activity Sampling API updates
+                    if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
+                        val sharedPref = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
+                        with (sharedPref.edit()) {
+                            putLong("timestamp", System.currentTimeMillis())
+                            apply()
+                        }
+                        context.startService(Intent(context, ActivitySamplingService::class.java).putExtra("millis", 100000L))
+                    } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
+                        context.stopService(Intent(context, ActivitySamplingService::class.java))
+                    }
                 }
                 print(output.toString())
                 showNotification(output.toString(), context)
@@ -51,11 +59,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        fun getPendingIntent(context: Context): PendingIntent {
-            val intent = Intent(context, DetectedTransitionReceiver::class.java)
-            // pending intent to receive callbacks
-             return PendingIntent.getBroadcast(context, 0, intent, 0)
-        }
+
         const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
         const val NOTIFICATION_ID = 18
     }
@@ -64,11 +68,11 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = R.string.channel_name
-            val descriptionText = R.string.channel_description
+            val name = context.resources.getString(R.string.channel_name)
+            val descriptionText = context.resources.getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name.toString(), importance).apply {
-                description = descriptionText.toString()
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
             }
             // Register the channel with the system
             val notificationManager: NotificationManager =
@@ -79,7 +83,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
 
     private fun showNotification(detectedActivity: String, context: Context) {
         createNotificationChannel(context)
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID).setContentTitle("Detected activity!").setContentText(detectedActivity)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.drawable.ic_launcher_foreground).setContentTitle("Detected activity!").setContentText(detectedActivity)
         with(NotificationManagerCompat.from(context)) {
             notify(NOTIFICATION_ID, builder.build())
         }
