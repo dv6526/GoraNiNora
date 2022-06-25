@@ -1,7 +1,10 @@
 package si.uni_lj.fri.pbd.sensecontext
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.ActivityTransition
@@ -47,6 +50,11 @@ fun MainActivity.requestActivityTransitionUpdates() {
     // interested
     val request = ActivityTransitionRequest(getTransitions())
     val intent = Intent(this, DetectedTransitionReceiver::class.java)
+    // android 12 crashes if flags is not included in pending intent
+    val flags = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+        else -> FLAG_UPDATE_CURRENT
+    }
     // pending intent to receive callbacks
     pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
 

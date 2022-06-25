@@ -1,7 +1,7 @@
 package si.uni_lj.fri.pbd.sensecontext
 
-import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -9,8 +9,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import si.uni_lj.fri.pbd.sensecontext.Fragments.HomeFragment
 import si.uni_lj.fri.pbd.sensecontext.Fragments.SensorsFragment
-import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
-import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -40,14 +38,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.page_2 -> {
                     replaceFragment((SensorsFragment()))
                     //check for permissions
-                    if (isPermissionGranted()) {
+                    if (isPermissionActivityTrackingGranted()) {
                         setActivityTransitionDetection()
-
-
-
                     } else {
-                        requestPermission()
+                        requestPermissionActivityRecognition()
                     }
+
 
 
                     true
@@ -73,12 +69,17 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Permission granted")
                 setActivityTransitionDetection()
             }
+        } else if (requestCode == LOCATION_PERMISSION_CODE) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                requestPermissionForLocation()
+            }
         }
     }
 
     private fun setActivityTransitionDetection() {
         Log.d(TAG, "Starting activity recognition...")
         requestActivityTransitionUpdates()
+        requestPermissionForLocation()
     }
 
     override fun onResume() {
