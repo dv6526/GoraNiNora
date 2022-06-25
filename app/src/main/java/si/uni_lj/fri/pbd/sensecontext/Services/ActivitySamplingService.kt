@@ -1,16 +1,24 @@
 package si.uni_lj.fri.pbd.sensecontext.Services
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.ActivityRecognitionClient
+import com.google.android.gms.location.LocationServices
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedActivityReceiver
 
 class ActivitySamplingService : Service() {
 
+    companion object {
+        const val STOP_BACKGROUND_SENSING = "si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.stop_background_service"
+    }
+
     private var millis: Long = 0
+
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -27,12 +35,13 @@ class ActivitySamplingService : Service() {
         super.onCreate()
         Toast.makeText(this, "Started Activity Sampling Service", Toast.LENGTH_LONG).show()
         requestActivityUpdates()
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Toast.makeText(this, "Stopped Activity Sampling Service", Toast.LENGTH_LONG).show()
-        removeActivityUpdates()
+        removeActivityUpdates(this)
     }
 
     private fun requestActivityUpdates() {
@@ -47,11 +56,20 @@ class ActivitySamplingService : Service() {
         }
     }
 
-    private fun removeActivityUpdates() {
+    private fun removeActivityUpdates(context: Context) {
         val task = ActivityRecognitionClient(this).removeActivityUpdates(DetectedActivityReceiver.getPendingIntent(this))
         task.run {
             addOnSuccessListener { Log.d("ActivitySamplingService", "Sampling API stopped!") }
             addOnFailureListener { Log.d("ActivitySamplingService", "Sampling API cannot be stopped!") }
         }
+
+        //val stopBackgroundLocationIntent = Intent(STOP_BACKGROUND_SENSING)
+        //context.sendBroadcast(stopBackgroundLocationIntent)
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        fusedLocationClient.removeLocationUpdates(DetectedActivityReceiver.getLocationPendingIntent(context))
+
     }
+
+
 }

@@ -44,7 +44,8 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                             apply()
                         }
                         context.startService(Intent(context, ActivitySamplingService::class.java).putExtra("millis", 100000L))
-                    } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
+                        // sometimes only recognized STILL ENTER and not both
+                    } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT || event.activityType == DetectedActivity.STILL && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         context.stopService(Intent(context, ActivitySamplingService::class.java))
                     }
                 }
