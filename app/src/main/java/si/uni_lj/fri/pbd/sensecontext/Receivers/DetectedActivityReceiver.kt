@@ -14,21 +14,10 @@ import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
 import java.util.concurrent.TimeUnit
 
 
-
+// only registered when user is in WALKING state
 class DetectedActivityReceiver : BroadcastReceiver() {
 
-    /*
-    inner class StopLocationUpdates: BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            stopLocationUpdates()
-        }
-    }*/
-
-    var startedLocationUpdates: Boolean = false
-
     lateinit var fusedLocationClient: FusedLocationProviderClient
-
 
     companion object {
 
@@ -44,7 +33,7 @@ class DetectedActivityReceiver : BroadcastReceiver() {
             return PendingIntent.getBroadcast(context, 0, intent, 0)
         }
 
-
+        var startedLocationUpdates: Boolean = false
 
     }
 
@@ -57,13 +46,16 @@ class DetectedActivityReceiver : BroadcastReceiver() {
             if (result?.mostProbableActivity?.type == WALKING || result?.mostProbableActivity?.type == ON_FOOT) {
                 val pref: SharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
                 val timeStamp = pref.getLong("timestamp", 0)
-                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(20)) {
-                    // start receiving background updates
+                // when user is WALKING for more than t seconds, start Background Location Updates
+                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(10)) {
                     if (!startedLocationUpdates) {
                         Toast.makeText(context, "You are walking for more than 20 seconds!", Toast.LENGTH_LONG).show()
                         startLocationUpdates(context)
                         startedLocationUpdates = true
                     }
+
+
+
                 }
             }
         }
@@ -71,8 +63,8 @@ class DetectedActivityReceiver : BroadcastReceiver() {
 
     fun startLocationUpdates(context: Context) {
         val locationRequest = create().apply {
-            interval = TimeUnit.SECONDS.toMillis(60)
-            fastestInterval = TimeUnit.SECONDS.toMillis(30)
+            interval = TimeUnit.SECONDS.toMillis(16)
+            fastestInterval = TimeUnit.SECONDS.toMillis(8)
             maxWaitTime = TimeUnit.MINUTES.toMillis(2)
             priority = PRIORITY_HIGH_ACCURACY
         }

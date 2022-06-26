@@ -20,7 +20,7 @@ class ForegroundService : Service(), SensorEventListener {
         const val ACTION_START = "action_start"
         var IS_RUNNING: Boolean = false
         const val NOTIFICATION_ID = 12
-        private const val CHANNEL_ID: String = "Sensor Data"
+        const val CHANNEL_ID: String = "Sensor Data"
     }
 
     private lateinit var sensorManager: SensorManager
@@ -65,7 +65,7 @@ class ForegroundService : Service(), SensorEventListener {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action.equals(ACTION_STOP)) {
-            stopSelf()
+            stopService()
         } else if (intent.action.equals(ACTION_START)) {
             startSensing()
         }
@@ -107,9 +107,10 @@ class ForegroundService : Service(), SensorEventListener {
         // Stop foreground service and remove the notification.
         stopForeground(true)
         // Stop the foreground service.
+        IS_RUNNING = false
         stopSelf()
 
-        IS_RUNNING = false
+
     }
 
 

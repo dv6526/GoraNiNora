@@ -12,13 +12,17 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startForegroundService
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
+import si.uni_lj.fri.pbd.sensecontext.ForegroundService.Companion.ACTION_START
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
+import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.Companion.ACTION_STOP
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DetectedTransitionReceiver : BroadcastReceiver() {
 
@@ -37,16 +41,36 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                             SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
                     output.append(info)
                     // when user is walking request Activity Sampling API updates
+                    // start ActivitySampling service when WALKING enter
                     if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         val sharedPref = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
                         with (sharedPref.edit()) {
                             putLong("timestamp", System.currentTimeMillis())
                             apply()
                         }
-                        context.startService(Intent(context, ActivitySamplingService::class.java).putExtra("millis", 100000L))
-                        // sometimes only recognized STILL ENTER and not both
+                        val i = Intent(context, ActivitySamplingService::class.java)
+                        i.putExtra("millis", TimeUnit.SECONDS.toMillis(10))
+                        i.action = ACTION_START
+                        if (!ActivitySamplingService.IS_RUNNING) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                context.startForegroundService(i)
+                            } else {
+                                context.startService(i)
+                            }
+                        }
+                    // stop ActivitySamplingService when WALKING exit
+                    // sometimes only recognized STILL ENTER and not both
                     } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT || event.activityType == DetectedActivity.STILL && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
-                        context.stopService(Intent(context, ActivitySamplingService::class.java))
+                        if (ActivitySamplingService.IS_RUNNING) {
+                            Toast.makeText(
+                                context,
+                                "Stopped Activity Sampling Service from transition receiver",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            val i = Intent(context, ActivitySamplingService::class.java)
+                            i.action = ACTION_STOP
+                            context.startService(i)
+                        }
                     }
                 }
                 print(output.toString())
