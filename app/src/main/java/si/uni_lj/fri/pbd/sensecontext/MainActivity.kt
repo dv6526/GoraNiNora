@@ -17,9 +17,7 @@ class MainActivity : AppCompatActivity() {
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
     }
 
-    private lateinit var navigation: BottomNavigationView
     private lateinit var binding: ActivityMainBinding
-    private var serviceStarted : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +31,7 @@ class MainActivity : AppCompatActivity() {
             when(item.itemId) {
                 R.id.page_1 -> {
                     replaceFragment(HomeFragment())
+                    //sendJobAPI()
                     true
                 }
                 R.id.page_2 -> {

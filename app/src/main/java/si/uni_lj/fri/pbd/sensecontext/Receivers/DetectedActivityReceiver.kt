@@ -63,8 +63,8 @@ class DetectedActivityReceiver : BroadcastReceiver() {
 
     fun startLocationUpdates(context: Context) {
         val locationRequest = create().apply {
-            interval = TimeUnit.SECONDS.toMillis(16)
-            fastestInterval = TimeUnit.SECONDS.toMillis(8)
+            interval = TimeUnit.SECONDS.toMillis(30)
+            fastestInterval = TimeUnit.SECONDS.toMillis(15)
             maxWaitTime = TimeUnit.MINUTES.toMillis(2)
             priority = PRIORITY_HIGH_ACCURACY
         }
