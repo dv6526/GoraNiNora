@@ -47,9 +47,9 @@ class DetectedActivityReceiver : BroadcastReceiver() {
                 val pref: SharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
                 val timeStamp = pref.getLong("timestamp", 0)
                 // when user is WALKING for more than t seconds, start Background Location Updates
-                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(10)) {
+                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(5)) {
                     if (!startedLocationUpdates) {
-                        Toast.makeText(context, "You are walking for more than 20 seconds!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "You are walking for more than 5 seconds!", Toast.LENGTH_LONG).show()
                         startLocationUpdates(context)
                         startedLocationUpdates = true
                     }
@@ -63,9 +63,9 @@ class DetectedActivityReceiver : BroadcastReceiver() {
 
     fun startLocationUpdates(context: Context) {
         val locationRequest = create().apply {
-            interval = TimeUnit.SECONDS.toMillis(30)
+            interval = TimeUnit.SECONDS.toMillis(15)
             fastestInterval = TimeUnit.SECONDS.toMillis(15)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+            maxWaitTime = TimeUnit.MINUTES.toMillis(15)
             priority = PRIORITY_HIGH_ACCURACY
         }
 
