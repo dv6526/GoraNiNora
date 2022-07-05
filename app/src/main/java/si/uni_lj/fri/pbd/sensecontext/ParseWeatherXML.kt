@@ -13,12 +13,28 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
+import si.uni_lj.fri.pbd.sensecontext.data.WeatherHour
 
 class ParseWeatherXML {
 
     private val weather = ArrayList<WeatherHour>()
     private var weatherHour: WeatherHour? = null
-    private var text: String? = null
+    private lateinit var text: String
+    private var date: Date? = null
+    private lateinit var oblacnost: String
+    private var vremenski_pojav: String? = null
+    private var intenzivnost: String? = null
+    private var t_1000: Int = 0
+    private var t_1500: Int = 0
+    private var t_2000: Int = 0
+    private var t_2500: Int = 0
+    private var t_3000: Int = 0
+    private var meja_snezenja: Int = 0
+    private var w_1000: Int = 0
+    private var w_1500: Int = 0
+    private var w_2000: Int = 0
+    private var w_2500: Int = 0
+    private var w_3000: Int = 0
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -33,40 +49,46 @@ class ParseWeatherXML {
                 val tagname = parser.name
                 when (eventType) {
                     XmlPullParser.START_TAG -> if (tagname.equals("metData")) {
-                        weatherHour = WeatherHour()
+                        //weatherHour = WeatherHour()
                     }
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG ->
                         if (tagname.equals("metData")) {
+                            weatherHour = si.uni_lj.fri.pbd.sensecontext.data.WeatherHour(0, date!!, oblacnost, vremenski_pojav, intenzivnost, t_1000, t_1500, t_2000, t_2500, t_3000, meja_snezenja, w_1000, w_1500, w_2000, w_2500, w_3000)
                             weatherHour?.let { weather.add(it) }
                         } else if (tagname.equals("valid")) {
                             val formatter = SimpleDateFormat("dd.MM.yyyy H:mm")
-                            val date = formatter.parse(text?.replace(" CEST", ""))
-                            weatherHour?.date = date
+                            date = formatter.parse(text.replace(" CEST", ""))
                         } else if (tagname.equals("nn_icon-wwsyn_icon")) {
-                            weatherHour?.oblacnost_pojav = text
+                            val list = text.split("_")
+                            oblacnost = list[0]
+                            if (list.size == 2) {
+                                val list2 = list[1].split("SH")
+                                intenzivnost = list2[0]
+                                vremenski_pojav = list2[1]
+                            }
                         } else if (tagname.equals("t_level_3000_m")) {
-                            weatherHour?.t_3000 = text?.toInt()
+                            t_3000 = text.toInt()
                         } else if (tagname.equals("t_level_2500_m")) {
-                            weatherHour?.t_2500 = text?.toInt()
+                            t_2500 = text.toInt()
                         } else if (tagname.equals("t_level_2000_m")) {
-                            weatherHour?.t_2000 = text?.toInt()
+                            t_2000 = text.toInt()
                         } else if (tagname.equals("t_level_1500_m")) {
-                            weatherHour?.t_1500 = text?.toInt()
+                            t_1500 = text.toInt()
                         } else if (tagname.equals("t_level_1000_m")) {
-                            weatherHour?.t_1000 = text?.toInt()
+                            t_1000 = text.toInt()
                         } else if (tagname.equals("ffVal_level_3000_m")) {
-                            weatherHour?.w_3000 = text?.toInt()
+                            w_3000 = text.toInt()
                         } else if (tagname.equals("ffVal_level_2500_m")) {
-                            weatherHour?.w_2500 = text?.toInt()
+                            w_2500 = text.toInt()
                         } else if (tagname.equals("ffVal_level_2000_m")) {
-                            weatherHour?.w_2000 = text?.toInt()
+                            w_2000 = text.toInt()
                         } else if (tagname.equals("ffVal_level_1500_m")) {
-                            weatherHour?.w_1500 = text?.toInt()
+                            w_1500 = text.toInt()
                         } else if (tagname.equals("ffVal_level_1000_m")) {
-                            weatherHour?.w_1000 = text?.toInt()
+                            w_1000 = text.toInt()
                         } else if (tagname.equals("sl_alt")) {
-                            weatherHour?.meja_snezenja = text?.toInt()
+                            meja_snezenja = text.toInt()
                         }
                 }
                 eventType = parser.next()

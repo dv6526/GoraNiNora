@@ -2,10 +2,11 @@ package si.uni_lj.fri.pbd.sensecontext
 
 import java.util.*
 
-class WeatherHour {
+class WeatherHourXML {
     var date: Date? = null
-    var oblacnost_pojav: String? = null
-    //var vremenski_pojav: String? = null
+    var oblacnost: String? = null
+    var vremenski_pojav: String? = null // ce je vremenski pojav null, potem je tudi intenzivnost null
+    var intenzivnost: String? = null
     var t_1000: Int? = null
     var t_1500: Int? = null
     var t_2000: Int? = null
