@@ -6,20 +6,19 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.location.ActivityRecognitionClient
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService
-import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R
-import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedActivityReceiver
+import si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesReceiver
+import java.util.concurrent.TimeUnit
 
-class ActivitySamplingService : Service() {
+class LocationUpdatesService : Service() {
 
     companion object {
         const val STOP_BACKGROUND_SENSING = "si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.stop_background_service"
@@ -28,9 +27,10 @@ class ActivitySamplingService : Service() {
         var IS_RUNNING: Boolean = false
         const val NOTIFICATION_ID = 12
         private const val CHANNEL_ID: String = "Sensor Data"
+        var locationUpdatesInterval: Long = 0
     }
 
-    private var millis: Long = 0
+    lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     override fun onBind(intent: Intent): IBinder? {
@@ -42,8 +42,7 @@ class ActivitySamplingService : Service() {
         if (intent.action.equals(ACTION_STOP)) {
             stopService()
         } else if (intent.action.equals(ACTION_START)) {
-            millis = intent?.getSerializableExtra("millis") as Long
-            Log.d("tag", millis.toString())
+            locationUpdatesInterval = intent?.getSerializableExtra("locationUpdatesInterval") as Long
         }
         return START_NOT_STICKY
     }
@@ -52,43 +51,18 @@ class ActivitySamplingService : Service() {
         super.onCreate()
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
-        requestActivityUpdates()
+        startLocationUpdates(this)
         IS_RUNNING = true
-        Toast.makeText(this, "Started Activity Sampling Service", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Started Location GPS Updates", Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Toast.makeText(this, "Stopped Activity Sampling Service", Toast.LENGTH_LONG).show()
-        removeActivityUpdates(this)
+        Toast.makeText(this, "Stopped Location GPS Updates", Toast.LENGTH_LONG).show()
+        removeLocationUpdates(this)
         IS_RUNNING = false
     }
 
-    private fun requestActivityUpdates() {
-        val task = ActivityRecognitionClient(this).requestActivityUpdates(millis, DetectedActivityReceiver.getPendingIntent(this))
-        task.run {
-            addOnSuccessListener {
-                Log.d(TAG, "Sampling API started!")
-            }
-            addOnFailureListener {
-                Log.d(TAG, "Sampling API cannot be started!")
-            }
-        }
-    }
-
-    private fun removeActivityUpdates(context: Context) {
-        val task = ActivityRecognitionClient(this).removeActivityUpdates(DetectedActivityReceiver.getPendingIntent(this))
-        task.run {
-            addOnSuccessListener { Log.d(TAG, "Sampling API stopped!") }
-            addOnFailureListener { Log.d(TAG, "Sampling API cannot be stopped!") }
-        }
-
-        // remove background location updates
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.removeLocationUpdates(DetectedActivityReceiver.getLocationPendingIntent(context))
-        DetectedActivityReceiver.startedLocationUpdates = false
-
-    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -119,8 +93,35 @@ class ActivitySamplingService : Service() {
         stopForeground(true)
         // Stop the foreground service.
         stopSelf()
-
         ForegroundService.IS_RUNNING = false
+    }
+
+    fun startLocationUpdates(context: Context) {
+        val locationRequest = LocationRequest.create().apply {
+            interval = TimeUnit.SECONDS.toMillis(locationUpdatesInterval)
+            fastestInterval = TimeUnit.SECONDS.toMillis(locationUpdatesInterval)
+            maxWaitTime = TimeUnit.MINUTES.toMillis(locationUpdatesInterval)
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        try {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                LocationUpdatesReceiver.getLocationPendingIntent(context)
+            )
+        } catch (error: SecurityException) {
+
+        }
+
+    }
+
+    private fun removeLocationUpdates(context: Context) {
+
+        // remove background location updates
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        fusedLocationClient.removeLocationUpdates(LocationUpdatesReceiver.getLocationPendingIntent(context))
+
     }
 
 

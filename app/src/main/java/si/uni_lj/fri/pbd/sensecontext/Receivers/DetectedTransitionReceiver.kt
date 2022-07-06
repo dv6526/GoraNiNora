@@ -2,28 +2,23 @@ package si.uni_lj.fri.pbd.sensecontext.Receivers
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startForegroundService
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
-import si.uni_lj.fri.pbd.sensecontext.ForegroundService.Companion.ACTION_START
-import si.uni_lj.fri.pbd.sensecontext.MainActivity
+import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R
-import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
-import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.Companion.ACTION_STOP
-import java.text.DateFormat
+import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
+import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService.Companion.ACTION_START
+import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService.Companion.ACTION_STOP
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -31,8 +26,16 @@ import java.util.concurrent.TimeUnit
 class DetectedTransitionReceiver : BroadcastReceiver() {
 
 
+    private val processingScope = kotlinx.coroutines.GlobalScope
 
-    var detectedActivitySamplingTime = 30L
+    companion object {
+        var activityState:String? = null
+        const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
+        const val NOTIFICATION_ID = 18
+        var waitBeforeLocationUpdates = 15L
+        var locationUpdatesInterval = 15L
+    }
+
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
@@ -51,31 +54,20 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                     // when user is walking request Activity Sampling API updates
                     // start ActivitySampling service when WALKING enter
                     if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
-                        val sharedPref = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
-                        with (sharedPref.edit()) {
-                            putLong("timestamp", System.currentTimeMillis())
-                            apply()
-                        }
-                        val i = Intent(context, ActivitySamplingService::class.java)
-                        i.putExtra("millis", TimeUnit.SECONDS.toMillis(detectedActivitySamplingTime))
-                        i.action = ACTION_START
-                        if (!ActivitySamplingService.IS_RUNNING) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                context.startForegroundService(i)
-                            } else {
-                                context.startService(i)
-                            }
-                        }
-                    // stop ActivitySamplingService when WALKING exit
+                        //activityState = "WALKING" does not work because everytime onReceive is called new instance is created
+                        activityState = "WALKING"
+
+                        // wait for t time and if still in WALKING state, then start activity sampling service
+                        processingScope.launch { waitTTime(TimeUnit.SECONDS.toMillis(waitBeforeLocationUpdates), context) }
+
+
+                    // stop LocationUpdatesService when WALKING exit
                     // sometimes only recognized STILL ENTER and not both
                     } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT || event.activityType == DetectedActivity.STILL && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
-                        if (ActivitySamplingService.IS_RUNNING) {
-                            Toast.makeText(
-                                context,
-                                "Stopped Activity Sampling Service from transition receiver",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            val i = Intent(context, ActivitySamplingService::class.java)
+                        activityState = "NOT WALKING"
+                        if (LocationUpdatesService.IS_RUNNING) {
+                            Toast.makeText(context, "Stopped Location Updates Service from transition receiver", Toast.LENGTH_LONG).show()
+                            val i = Intent(context, LocationUpdatesService::class.java)
                             i.action = ACTION_STOP
                             context.startService(i)
                         }
@@ -86,16 +78,26 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
             }
         }
     }
-    private fun handleDetectedActivities(detectedActivities: List<DetectedActivity>,
-                                         context: Context) {
+    private fun waitTTime(waitTime: Long, context: Context) {
+        Thread.sleep(waitTime)
+        //val pref: SharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        //val activityState = pref.getString("activityState", null)
+        if (activityState == "WALKING") {
+            val i = Intent(context, LocationUpdatesService::class.java)
+            i.putExtra("locationUpdatesInterval", locationUpdatesInterval)
+            i.action = ACTION_START
+            if (!LocationUpdatesService.IS_RUNNING) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(i)
+                } else {
+                    context.startService(i)
+                }
+            }
+        }
+        Log.d(TAG, "After $waitBeforeLocationUpdates. seconds. $activityState")
 
     }
 
-    companion object {
-
-        const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
-        const val NOTIFICATION_ID = 18
-    }
 
     private fun createNotificationChannel(context: Context) {
         // Create the NotificationChannel, but only on API 26+ because

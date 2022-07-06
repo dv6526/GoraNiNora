@@ -1,5 +1,6 @@
 package si.uni_lj.fri.pbd.sensecontext.Receivers
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
+import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -27,20 +29,20 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             "si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesBroadcastReceiver." +
                     "PROCESS_UPDATES"
         var prevDate: Date? = null
+        fun getLocationPendingIntent(context: Context): PendingIntent {
+            val intent = Intent(context, LocationUpdatesReceiver::class.java)
+            intent.action = LocationUpdatesReceiver.ACTION_PROCESS_UPDATES
+            return PendingIntent.getBroadcast(context, 0, intent, 0)
+        }
 
     }
     val processingScope = CoroutineScope(Dispatchers.IO)
-    val timeBetweenUpdates = 45L // if 45 seconds elapsed since last location, we call API
+    val timeBetweenUpdates = LocationUpdatesService.locationUpdatesInterval // if seconds elapsed since last location, we call API
 
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_PROCESS_UPDATES) {
             // Checks for location availability changes.
-            LocationAvailability.extractLocationAvailability(intent)?.let { locationAvailability ->
-                if (!locationAvailability.isLocationAvailable) {
-                    Log.d(TAG, "Location services are no longer available!")
-                }
-            }
 
             LocationResult.extractResult(intent)?.let { locationResult ->
                 //only take first location
@@ -51,10 +53,11 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                 var timeDiff = TimeUnit.SECONDS.toMillis(timeBetweenUpdates)
                 if (millis2 != null)
                     timeDiff = millis1 - millis2
-                if (timeDiff >= TimeUnit.SECONDS.toMillis(timeBetweenUpdates))
+                if (timeDiff >= TimeUnit.SECONDS.toMillis(timeBetweenUpdates)) {
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
                     sendJobAPI(location.latitude, location.longitude, context)
+                }
                 prevDate = curDate
             }
         }
