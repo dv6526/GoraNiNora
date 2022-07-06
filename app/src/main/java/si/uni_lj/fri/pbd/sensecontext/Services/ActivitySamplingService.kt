@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.LocationServices
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedActivityReceiver
 
@@ -67,10 +68,10 @@ class ActivitySamplingService : Service() {
         val task = ActivityRecognitionClient(this).requestActivityUpdates(millis, DetectedActivityReceiver.getPendingIntent(this))
         task.run {
             addOnSuccessListener {
-                Log.d("ActivitySamplingService", "Sampling API started!")
+                Log.d(TAG, "Sampling API started!")
             }
             addOnFailureListener {
-                Log.d("ActivitySamplingService", "Sampling API cannot be started!")
+                Log.d(TAG, "Sampling API cannot be started!")
             }
         }
     }
@@ -78,8 +79,8 @@ class ActivitySamplingService : Service() {
     private fun removeActivityUpdates(context: Context) {
         val task = ActivityRecognitionClient(this).removeActivityUpdates(DetectedActivityReceiver.getPendingIntent(this))
         task.run {
-            addOnSuccessListener { Log.d("ActivitySamplingService", "Sampling API stopped!") }
-            addOnFailureListener { Log.d("ActivitySamplingService", "Sampling API cannot be stopped!") }
+            addOnSuccessListener { Log.d(TAG, "Sampling API stopped!") }
+            addOnFailureListener { Log.d(TAG, "Sampling API cannot be stopped!") }
         }
 
         // remove background location updates

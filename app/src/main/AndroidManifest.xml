@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
         <receiver
-            android:name=".Receivers.LocationUpdatesBroadcastReceiver"
+            android:name=".Receivers.LocationUpdatesReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
         <receiver

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings.Global.getString
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,14 +18,21 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService.Companion.ACTION_START
+import si.uni_lj.fri.pbd.sensecontext.MainActivity
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
 import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.Companion.ACTION_STOP
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DetectedTransitionReceiver : BroadcastReceiver() {
+
+
+
+    var detectedActivitySamplingTime = 30L
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
@@ -49,7 +57,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                             apply()
                         }
                         val i = Intent(context, ActivitySamplingService::class.java)
-                        i.putExtra("millis", TimeUnit.SECONDS.toMillis(10))
+                        i.putExtra("millis", TimeUnit.SECONDS.toMillis(detectedActivitySamplingTime))
                         i.action = ACTION_START
                         if (!ActivitySamplingService.IS_RUNNING) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -73,7 +81,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                         }
                     }
                 }
-                print(output.toString())
+                Log.d(TAG, "Detected activity transition " + output.toString())
                 showNotification(output.toString(), context)
             }
         }

@@ -1,4 +1,4 @@
-package si.uni_lj.fri.pbd.sensecontext
+package si.uni_lj.fri.pbd.sensecontext.Weather
 
 import java.util.*
 

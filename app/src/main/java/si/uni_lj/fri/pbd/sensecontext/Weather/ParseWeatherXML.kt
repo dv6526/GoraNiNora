@@ -1,4 +1,4 @@
-package si.uni_lj.fri.pbd.sensecontext
+package si.uni_lj.fri.pbd.sensecontext.Weather
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -8,9 +8,6 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import si.uni_lj.fri.pbd.sensecontext.data.WeatherHour

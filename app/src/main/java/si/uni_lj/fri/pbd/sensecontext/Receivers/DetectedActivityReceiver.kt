@@ -10,7 +10,7 @@ import com.google.android.gms.location.DetectedActivity.WALKING
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationRequest.*
-import si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import java.util.concurrent.TimeUnit
 
 
@@ -28,8 +28,8 @@ class DetectedActivityReceiver : BroadcastReceiver() {
         }
 
         fun getLocationPendingIntent(context: Context): PendingIntent {
-            val intent = Intent(context, LocationUpdatesBroadcastReceiver::class.java)
-            intent.action = LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES
+            val intent = Intent(context, LocationUpdatesReceiver::class.java)
+            intent.action = LocationUpdatesReceiver.ACTION_PROCESS_UPDATES
             return PendingIntent.getBroadcast(context, 0, intent, 0)
         }
 
@@ -39,6 +39,7 @@ class DetectedActivityReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast
+        Log.d(TAG, "DetectedActivityReceiver onReceive() ")
         //Toast.makeText(context, "onReceive", Toast.LENGTH_LONG).show()
         if (ActivityRecognitionResult.hasResult(intent)) {
             val result = ActivityRecognitionResult.extractResult(intent)
@@ -47,9 +48,10 @@ class DetectedActivityReceiver : BroadcastReceiver() {
                 val pref: SharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
                 val timeStamp = pref.getLong("timestamp", 0)
                 // when user is WALKING for more than t seconds, start Background Location Updates
-                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(5)) {
+                if (System.currentTimeMillis() - timeStamp >= TimeUnit.SECONDS.toMillis(20)) {
                     if (!startedLocationUpdates) {
-                        Toast.makeText(context, "You are walking for more than 5 seconds!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "You are walking for more than 20 seconds!", Toast.LENGTH_LONG).show()
+                        Log.d(TAG, "Start GPS location updates.")
                         startLocationUpdates(context)
                         startedLocationUpdates = true
                     }

@@ -20,7 +20,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
+class LocationUpdatesReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_PROCESS_UPDATES =
@@ -30,7 +30,7 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
 
     }
     val processingScope = CoroutineScope(Dispatchers.IO)
-
+    val timeBetweenUpdates = 45L // if 45 seconds elapsed since last location, we call API
 
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -48,11 +48,12 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
                 val curDate = Date(location.time)
                 val millis1: Long = curDate.time
                 val millis2: Long? = prevDate?.time
-                var timeDiff = TimeUnit.SECONDS.toMillis(15)
+                var timeDiff = TimeUnit.SECONDS.toMillis(timeBetweenUpdates)
                 if (millis2 != null)
                     timeDiff = millis1 - millis2
-                if (timeDiff >= TimeUnit.SECONDS.toMillis(15))
+                if (timeDiff >= TimeUnit.SECONDS.toMillis(timeBetweenUpdates))
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
+                    Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
                     sendJobAPI(location.latitude, location.longitude, context)
                 prevDate = curDate
             }
@@ -150,7 +151,8 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
                     val cont = JsonPath.parse(response.body!!.string())
                     val slope = cont.read<Double>("$.value.features[0].attributes.MeanSlope")
                     val elevation = cont.read<Double>("$.value.features[0].attributes.MeanElevation")
-                    Log.d(TAG, "slope: " + slope + " elevation: " + elevation)
+                    val aspect = cont.read<Double>("$.value.features[0].attributes.MeanAspect")
+                    Log.d(TAG, "ArcgisAPI update " + elevation.toString() + "m elevation, " + slope.toString() + " degree slope " + aspect.toString() + " degree aspect")
                     Handler(Looper.getMainLooper()).post(Runnable {
                         Toast.makeText(
                             context,

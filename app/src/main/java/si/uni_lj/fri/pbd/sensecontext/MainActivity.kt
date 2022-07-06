@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.work.*
 import si.uni_lj.fri.pbd.sensecontext.Fragments.HomeFragment
 import si.uni_lj.fri.pbd.sensecontext.Fragments.SensorsFragment
+import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     companion object {
-        const val TAG = "MainActivity"
+        const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
     }
 
