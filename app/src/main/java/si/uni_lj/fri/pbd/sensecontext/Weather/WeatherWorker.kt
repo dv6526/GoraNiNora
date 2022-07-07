@@ -10,9 +10,9 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import si.uni_lj.fri.pbd.sensecontext.data.WeatherDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.WeatherHour
-import si.uni_lj.fri.pbd.sensecontext.data.WeatherRepository
+import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.lang.Exception
 
 
@@ -28,7 +28,7 @@ class WeatherWorker (ctx: Context, params: WorkerParameters): CoroutineWorker(ct
         try {
             val response: Response = client.newCall(getRequest).execute()
             val stream = response.body?.byteStream()
-            //val stream = applicationContext.assets.open("forecast.xml")
+            //val stream = applicationContext.assets.open("forecast2.xml")
             if (stream != null) {
                 val parser = ParseWeatherXML()
                 val weather = stream.let { parser.parse(it) }
@@ -42,9 +42,9 @@ class WeatherWorker (ctx: Context, params: WorkerParameters): CoroutineWorker(ct
 
 
     suspend fun updateWeatherDatabase(weather: ArrayList<WeatherHour>) {
-        val db = WeatherDatabase.getDatabase(applicationContext)
-        val weatherDao = db.WeatherDao()
-        val repository = WeatherRepository(weatherDao)
+        val db = ApplicationDatabase.getDatabase(applicationContext)
+        val weatherDao = db.dao()
+        val repository = Repository(weatherDao)
         for (item in weather) {
             withContext(Dispatchers.IO) {
                 repository.addWeatherHour(item)

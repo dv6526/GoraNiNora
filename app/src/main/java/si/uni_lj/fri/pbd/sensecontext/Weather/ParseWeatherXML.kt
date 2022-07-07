@@ -60,9 +60,10 @@ class ParseWeatherXML {
                             val list = text.split("_")
                             oblacnost = list[0]
                             if (list.size == 2) {
-                                val list2 = list[1].split("SH")
-                                intenzivnost = list2[0]
-                                vremenski_pojav = list2[1]
+                                val niz = list[1].replace("SH", "")
+                                val idx = firstCapital(niz)
+                                intenzivnost = niz.substring(0, idx)
+                                vremenski_pojav = niz.substring(idx)
                             }
                         } else if (tagname.equals("t_level_3000_m")) {
                             t_3000 = text.toInt()
@@ -96,5 +97,15 @@ class ParseWeatherXML {
             e.printStackTrace()
         }
         return weather
+    }
+
+    fun firstCapital(niz: String): Int {
+        var idx = 0
+        for (letter in niz) {
+            if (letter.isUpperCase())
+                break
+            idx += 1
+        }
+        return idx
     }
 }

@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -16,13 +15,12 @@ import com.jayway.jsonpath.JsonPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.data.Location
-import si.uni_lj.fri.pbd.sensecontext.data.WeatherDatabase
-import si.uni_lj.fri.pbd.sensecontext.data.WeatherRepository
+import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -203,9 +201,9 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
     }
 
     fun saveLocationDatabase(lat: Double, lon: Double, elevation: Double, slope: Double, aspect: Double, context: Context) {
-        val db = WeatherDatabase.getDatabase(context)
-        val weatherDao = db.WeatherDao()
-        val repository = WeatherRepository(weatherDao)
+        val db = ApplicationDatabase.getDatabase(context)
+        val weatherDao = db.dao()
+        val repository = Repository(weatherDao)
         val date = Calendar.getInstance().time
         val location = Location(0, date, lon, lat, slope, elevation, aspect)
         processingScope.launch  {repository.addLocation(location)  }

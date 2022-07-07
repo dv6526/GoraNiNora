@@ -8,14 +8,14 @@ import androidx.room.TypeConverters
 
 @Database(entities = [WeatherHour::class, Location::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
-abstract class WeatherDatabase: RoomDatabase() {
+abstract class ApplicationDatabase: RoomDatabase() {
 
-    abstract fun WeatherDao(): WeatherDao
+    abstract fun dao(): DatabaseDao
 
     companion object {
-        private var INSTANCE: WeatherDatabase? = null
+        private var INSTANCE: ApplicationDatabase? = null
 
-        fun getDatabase(context: Context): WeatherDatabase {
+        fun getDatabase(context: Context): ApplicationDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -23,7 +23,7 @@ abstract class WeatherDatabase: RoomDatabase() {
             synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    WeatherDatabase::class.java,
+                    ApplicationDatabase::class.java,
                     "weather_database"
                 ).build()
                 INSTANCE = instance
