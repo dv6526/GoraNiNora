@@ -24,7 +24,7 @@ class LocationUpdatesService : Service() {
         const val STOP_BACKGROUND_SENSING = "si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.stop_background_service"
         const val ACTION_STOP = "action_stop"
         const val ACTION_START = "action_start"
-        var IS_RUNNING: Boolean = false
+        var IS_RUNNING: Boolean = false // if service is running
         const val NOTIFICATION_ID = 12
         private const val CHANNEL_ID: String = "Sensor Data"
         var locationUpdatesInterval: Long = 0

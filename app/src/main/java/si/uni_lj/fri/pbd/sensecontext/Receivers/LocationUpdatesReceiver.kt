@@ -10,6 +10,8 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
 import com.jayway.jsonpath.JsonPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,13 +56,34 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                 if (millis2 != null)
                     timeDiff = millis1 - millis2
                 if (timeDiff >= TimeUnit.SECONDS.toMillis(timeBetweenUpdates)) {
+                    //Log.d(TAG, "Prev date $prevDate")
+                    //Log.d(TAG, "Cur date $curDate")
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
-                    sendJobAPI(location.latitude, location.longitude, context)
+                    if (isInsideMountainsFence(location.latitude, location.longitude)) {
+                        sendJobAPI(location.latitude, location.longitude, context)
+                    }
+                    prevDate = curDate
                 }
-                prevDate = curDate
+
             }
         }
+    }
+
+    fun isInsideMountainsFence(lat: Double, lon: Double): Boolean {
+        val pts: MutableList<LatLng> = ArrayList()
+        /* Home location
+        pts.add(LatLng(46.333164269796875, 14.328845691769393))
+        pts.add(LatLng(46.32889716839761, 14.342621517269881))
+        pts.add(LatLng(46.31736840370528, 14.334853839962753))
+        pts.add(LatLng(46.321814230575065, 14.321464252560409))
+         */
+
+        pts.add(LatLng(46.32455349101422,14.339970970425394 ))
+        pts.add(LatLng(46.319752222784885,14.341129684719828 ))
+        pts.add(LatLng(46.3209377602873,14.337138557705668 ))
+        val loc = LatLng(lat, lon)
+        return PolyUtil.containsLocation(loc, pts, true);
     }
 
     fun sendJobAPI(lat: Double, lon: Double, context: Context) {
@@ -91,7 +114,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val cont = JsonPath.parse(response.body!!.string())
                     val job_id = cont.read<String>("jobId")
-                    processingScope.launch { getJobStatus(job_id, context) }
+                    processingScope.launch { getJobStatus(job_id, lat, lon, context) }
 
                 }
             }
@@ -99,7 +122,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
     }
 
 
-    suspend fun getJobStatus(job_id: String, context: Context) {
+    suspend fun getJobStatus(job_id: String, lat: Double, lon: Double, context: Context) {
         var jobCompleted: Boolean = false
         val client = OkHttpClient()
         val urlBuilder = HttpUrl.Builder()
@@ -125,10 +148,10 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             }
         }
 
-        getResults(job_id, context)
+        getResults(job_id, lat, lon, context)
     }
 
-    fun getResults(job_id: String, context: Context) {
+    fun getResults(job_id: String, lat: Double, lon: Double, context: Context) {
         val client = OkHttpClient()
         val urlBuilder = HttpUrl.Builder()
             .scheme("https")
@@ -163,6 +186,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                             Toast.LENGTH_LONG
                         ).show()
                     })
+
                 }
             }
         })

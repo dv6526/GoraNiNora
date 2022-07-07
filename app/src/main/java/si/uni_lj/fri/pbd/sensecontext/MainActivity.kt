@@ -1,5 +1,6 @@
 package si.uni_lj.fri.pbd.sensecontext
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -8,15 +9,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
-import si.uni_lj.fri.pbd.sensecontext.Fragments.HomeFragment
-import si.uni_lj.fri.pbd.sensecontext.Fragments.SensorsFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.HomeFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.SensorsFragment
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
     companion object {
         const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
@@ -63,6 +64,15 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         setWeatherUpdatesTest()
     }
+
+    override fun stopActivityTransitionUpdates() {
+        removeActivityTransitionUpdates()
+    }
+
+    override fun startActivityTransitionUpdates() {
+        requestActivityTransitionUpdates()
+    }
+
 
     fun setWeatherUpdatesTest() {
         val workRequest = OneTimeWorkRequestBuilder<WeatherWorker>().build()

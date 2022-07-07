@@ -1,4 +1,4 @@
-package si.uni_lj.fri.pbd.sensecontext.Fragments
+package si.uni_lj.fri.pbd.sensecontext.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -30,17 +30,18 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
 
     companion object {
         var activityState:String? = null
+        var override_walking: Boolean = false
         const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
         const val NOTIFICATION_ID = 18
         var waitBeforeLocationUpdates = 15L
-        var locationUpdatesInterval = 15L
+        var locationUpdatesInterval = 30L
     }
 
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
 
-        if (ActivityTransitionResult.hasResult(intent)) {
+        if (ActivityTransitionResult.hasResult(intent) && !override_walking) {
             val result = ActivityTransitionResult.extractResult(intent)
             if (result != null) {
 
@@ -52,9 +53,8 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                             SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
                     output.append(info)
                     // when user is walking request Activity Sampling API updates
-                    // start ActivitySampling service when WALKING enter
+                    // start Location Updates Service when WALKING enter
                     if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
-                        //activityState = "WALKING" does not work because everytime onReceive is called new instance is created
                         activityState = "WALKING"
 
                         // wait for t time and if still in WALKING state, then start activity sampling service
