@@ -12,5 +12,11 @@ interface WeatherDao {
     suspend fun add_weather_hour(weatherHour: WeatherHour)
 
     @Query("SELECT * FROM weather_table ORDER BY id ASC")
-    fun readAllData(): List<WeatherHour>
+    fun readAllDataWeather(): List<WeatherHour>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun add_location(location: Location)
+
+    @Query("SELECT * FROM location_table ORDER BY id ASC")
+    fun readAllDataLocation(): List<Location>
 }

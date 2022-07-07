@@ -19,6 +19,6 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:minHeight="32dp"
-        android:text="Override I am WALKING." />
+        android:text="Override I am HIKING in the mountains." />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

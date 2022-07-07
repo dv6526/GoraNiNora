@@ -30,7 +30,6 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
 
     companion object {
         var activityState:String? = null
-        var override_walking: Boolean = false
         const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
         const val NOTIFICATION_ID = 18
         var waitBeforeLocationUpdates = 15L
@@ -41,7 +40,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
 
-        if (ActivityTransitionResult.hasResult(intent) && !override_walking) {
+        if (ActivityTransitionResult.hasResult(intent)) {
             val result = ActivityTransitionResult.extractResult(intent)
             if (result != null) {
 

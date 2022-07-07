@@ -16,9 +16,13 @@ import com.jayway.jsonpath.JsonPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
+import si.uni_lj.fri.pbd.sensecontext.data.Location
+import si.uni_lj.fri.pbd.sensecontext.data.WeatherDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.WeatherRepository
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -72,16 +76,19 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
 
     fun isInsideMountainsFence(lat: Double, lon: Double): Boolean {
         val pts: MutableList<LatLng> = ArrayList()
-        /* Home location
+
         pts.add(LatLng(46.333164269796875, 14.328845691769393))
         pts.add(LatLng(46.32889716839761, 14.342621517269881))
         pts.add(LatLng(46.31736840370528, 14.334853839962753))
         pts.add(LatLng(46.321814230575065, 14.321464252560409))
-         */
 
+
+        /*
         pts.add(LatLng(46.32455349101422,14.339970970425394 ))
         pts.add(LatLng(46.319752222784885,14.341129684719828 ))
         pts.add(LatLng(46.3209377602873,14.337138557705668 ))
+
+         */
         val loc = LatLng(lat, lon)
         return PolyUtil.containsLocation(loc, pts, true);
     }
@@ -187,9 +194,22 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                         ).show()
                     })
 
+                    //save location to database
+                    saveLocationDatabase(lat, lon, elevation, slope, aspect, context)
+
                 }
             }
         })
+    }
+
+    fun saveLocationDatabase(lat: Double, lon: Double, elevation: Double, slope: Double, aspect: Double, context: Context) {
+        val db = WeatherDatabase.getDatabase(context)
+        val weatherDao = db.WeatherDao()
+        val repository = WeatherRepository(weatherDao)
+        val date = Calendar.getInstance().time
+        val location = Location(0, date, lon, lat, slope, elevation, aspect)
+        processingScope.launch  {repository.addLocation(location)  }
+
     }
 
 }

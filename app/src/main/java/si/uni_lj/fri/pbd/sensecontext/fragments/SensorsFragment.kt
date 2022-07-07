@@ -47,12 +47,10 @@ class SensorsFragment : Fragment() {
             if (isChecked) {
                 editor.putBoolean("override", true)
                 editor.apply()
-                DetectedTransitionReceiver.override_walking = true
                 startLocationUpdates()
             } else {
                 editor.putBoolean("override", false)
                 editor.apply()
-                DetectedTransitionReceiver.override_walking = false
                 stopLocationUpdates()
             }
         }
@@ -78,6 +76,7 @@ class SensorsFragment : Fragment() {
 
     fun startLocationUpdates() {
         activityCallback?.stopActivityTransitionUpdates()
+        LocationUpdatesService.user_is_hiking = true
         if (!LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.putExtra("locationUpdatesInterval",
@@ -96,6 +95,7 @@ class SensorsFragment : Fragment() {
 
     fun stopLocationUpdates() {
         activityCallback?.startActivityTransitionUpdates()
+        LocationUpdatesService.user_is_hiking = false
         if (LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.action = LocationUpdatesService.ACTION_STOP
