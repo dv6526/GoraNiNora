@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import java.util.*
 
 @Dao
 interface DatabaseDao {
@@ -19,4 +20,7 @@ interface DatabaseDao {
 
     @Query("SELECT * FROM location_table ORDER BY id ASC")
     fun readAllDataLocation(): List<Location>
+
+    @Query("SELECT * FROM location_table WHERE date BETWEEN :from AND :to")
+    fun fetchLocationsBetweenDate(from: Date, to: Date): List<Location>
 }

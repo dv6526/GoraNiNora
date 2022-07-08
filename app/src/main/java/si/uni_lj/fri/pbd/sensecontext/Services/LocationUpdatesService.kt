@@ -61,6 +61,7 @@ class LocationUpdatesService : Service() {
         super.onDestroy()
         Toast.makeText(this, "Stopped Location GPS Updates", Toast.LENGTH_LONG).show()
         removeLocationUpdates(this)
+        user_is_hiking = false
         IS_RUNNING = false
     }
 

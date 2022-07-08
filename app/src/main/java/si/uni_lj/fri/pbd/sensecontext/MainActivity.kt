@@ -1,5 +1,7 @@
 package si.uni_lj.fri.pbd.sensecontext
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -9,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
+import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.fragments.HomeFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.SensorsFragment
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
     companion object {
         const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
+        const val CHANNEL_ID_WARNING = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_WARNING"
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -28,6 +32,8 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        createNotificationChannels()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -127,5 +133,23 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    fun createNotificationChannels() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = applicationContext.resources.getString(R.string.channel_name_warning)
+            val descriptionText = applicationContext.resources.getString(R.string.channel_description_warning)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID_WARNING, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+
+        }
     }
 }

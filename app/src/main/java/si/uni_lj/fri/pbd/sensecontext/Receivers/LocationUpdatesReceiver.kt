@@ -8,6 +8,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -16,10 +18,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
+import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
-import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.io.IOException
 import java.util.*
@@ -38,7 +42,6 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             intent.action = LocationUpdatesReceiver.ACTION_PROCESS_UPDATES
             return PendingIntent.getBroadcast(context, 0, intent, 0)
         }
-
     }
     val processingScope = CoroutineScope(Dispatchers.IO)
     val timeBetweenUpdates = LocationUpdatesService.locationUpdatesInterval // if seconds elapsed since last location, we call API
@@ -194,6 +197,8 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
 
                     //save location to database
                     saveLocationDatabase(lat, lon, elevation, slope, aspect, context)
+                    if (!LocationUpdatesService.user_is_hiking)
+                        detectUserIsHiking(context)
 
                 }
             }
@@ -202,12 +207,53 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
 
     fun saveLocationDatabase(lat: Double, lon: Double, elevation: Double, slope: Double, aspect: Double, context: Context) {
         val db = ApplicationDatabase.getDatabase(context)
-        val weatherDao = db.dao()
-        val repository = Repository(weatherDao)
+        val dao = db.dao()
+        val repository = Repository(dao)
         val date = Calendar.getInstance().time
         val location = Location(0, date, lon, lat, slope, elevation, aspect)
         processingScope.launch  {repository.addLocation(location)  }
 
+    }
+
+    fun detectUserIsHiking(context: Context) {
+        val db = ApplicationDatabase.getDatabase(context)
+        val weatherDao = db.dao()
+        val repository = Repository(weatherDao)
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.MINUTE, -30)
+        val backTime = cal.time
+        processingScope.launch  {
+            val loc: List<Location> = repository.fetchLocationsBetweenDate(backTime, Calendar.getInstance().time)
+            val acumulativeHeight = calcAccHeight(loc)
+            if (acumulativeHeight > 0) {
+                LocationUpdatesService.user_is_hiking = true
+                showNotification("Application detected that you might be HIKING.", context)
+            }
+            Log.d(TAG, acumulativeHeight.toString())
+        }
+    }
+
+    fun calcAccHeight(locations: List<Location>): Double {
+        var height: Double = 0.0
+        var prevLoc: Location? = null
+        for (loc in locations) {
+            if (prevLoc == null) {
+                prevLoc = loc
+            }
+            val diff = loc.elevation - prevLoc.elevation
+            if (diff > 0)
+                height += diff
+            prevLoc = loc
+        }
+        return height
+    }
+
+    private fun showNotification(warningText: String, context: Context) {
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID_WARNING).setSmallIcon(
+            R.drawable.ic_launcher_foreground).setContentTitle("Detected HIKING in MOUNTAINS!").setContentText(warningText)
+        with(NotificationManagerCompat.from(context)) {
+            notify(DetectedTransitionReceiver.NOTIFICATION_ID, builder.build())
+        }
     }
 
 }
