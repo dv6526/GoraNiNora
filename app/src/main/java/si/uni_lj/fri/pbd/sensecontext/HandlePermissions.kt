@@ -10,7 +10,7 @@ const val REQUEST_ID_ACTIVITY_PERMISSIONS = 15
 const val  LOCATION_PERMISSION_CODE = 16
 const val BACKGROUND_LOCATION_PERMISSIONS_CODE = 17
 
-fun MainActivity.requestPermissionActivityRecognition() {
+fun MainActivity.requestPermissionTransitionRecognition() {
     if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACTIVITY_RECOGNITION)) {
         showRationalDialog(this)
     } else {
@@ -18,7 +18,7 @@ fun MainActivity.requestPermissionActivityRecognition() {
     }
 }
 
-fun MainActivity.isPermissionActivityTrackingGranted(): Boolean {
+fun MainActivity.isPermissionTransitionRecognitionGranted(): Boolean {
 
     //   For a device running on the system lower than Android Q, return true
     //  For a device running on the Android Q or later, request permission
@@ -37,22 +37,18 @@ fun MainActivity.requestPermissionForLocation() {
     if (PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
         //FINE location permission is granted
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                //BACKGROUND LOCATION permission is granted
-
-            } else {
-                //ask for background permission
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                 askForBackgroundPermission(this)
             }
         }
     } else {
         // ask for fine location permission
-        askForLocationPermission(this)
+        askForFineLocationPermission(this)
 
     }
 }
 
-private fun askForLocationPermission(activity: Activity) {
+private fun askForFineLocationPermission(activity: Activity) {
     if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
         showRationalDialogLocationPermission(activity)
     } else {

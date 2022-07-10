@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
-import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.fragments.HomeFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.SensorsFragment
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
@@ -50,20 +49,14 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
                 }
                 R.id.page_2 -> {
                     replaceFragment((SensorsFragment()))
-                    //check for permissions
-                    if (isPermissionActivityTrackingGranted()) {
-                        setActivityTransitionDetection()
-                    } else {
-                        requestPermissionActivityRecognition()
-                    }
-
-
 
                     true
                 }
                 else -> false
             }
         }
+
+        requestPermissions()
     }
 
     override fun onStart() {
@@ -79,6 +72,17 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         requestActivityTransitionUpdates()
     }
 
+    fun requestPermissions() {
+
+        if (isPermissionTransitionRecognitionGranted()) {
+            requestActivityTransitionUpdates()
+        } else {
+            requestPermissionTransitionRecognition()
+        }
+        requestPermissionForLocation()
+
+
+    }
 
     fun setWeatherUpdatesTest() {
         val workRequest = OneTimeWorkRequestBuilder<WeatherWorker>().build()
@@ -116,7 +120,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
                 Log.d(TAG, "Permission denied")
             } else {
                 Log.d(TAG, "Permission granted")
-                setActivityTransitionDetection()
+                requestActivityTransitionUpdates()
             }
         } else if (requestCode == LOCATION_PERMISSION_CODE) {
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -125,11 +129,6 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         }
     }
 
-    private fun setActivityTransitionDetection() {
-        Log.d(TAG, "Starting activity recognition...")
-        requestActivityTransitionUpdates()
-        requestPermissionForLocation()
-    }
 
     override fun onResume() {
         super.onResume()
