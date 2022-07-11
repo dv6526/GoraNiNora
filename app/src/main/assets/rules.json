@@ -1,0 +1,67 @@
+{"rules":[
+  {
+    "aspect": "S",
+    "min_slope": 30.0,
+    "max_slope": 45.0,
+    "elevation_min": null,
+    "elevation_max": null,
+    "user_hiking": true,
+    "weather_descriptions": [
+      {
+        "day_delay": 0,
+        "temp_avg_min": 10.0,
+        "temp_avg_max": 15.0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1000"
+      },
+      {
+        "day_delay": 0,
+        "temp_avg_min": null,
+        "temp_avg_max": null,
+        "hour_min": 8,
+        "hour_max": 12,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1000"
+      }
+    ]
+  },
+  {
+    "aspect": "S",
+    "min_slope": 30.0,
+    "max_slope": 45.0,
+    "elevation_min": null,
+    "elevation_max": null,
+    "user_hiking": true,
+    "weather_descriptions": [
+      {
+        "day_delay": 0,
+        "temp_avg_min": 10.0,
+        "temp_avg_max": 15.0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1000"
+      },
+      {
+        "day_delay": 0,
+        "temp_avg_min": null,
+        "temp_avg_max": null,
+        "hour_min": 8,
+        "hour_max": 12,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1000"
+      }
+    ]
+  }
+]
+}

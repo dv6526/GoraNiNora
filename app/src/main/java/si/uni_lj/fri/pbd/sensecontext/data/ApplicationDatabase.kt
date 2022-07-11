@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [WeatherHour::class, Location::class], version = 1, exportSchema = false)
+@Database(entities = [WeatherHour::class, Location::class, Rule::class, WeatherDescription::class, RuleWeatherDescriptionRef::class,], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ApplicationDatabase: RoomDatabase() {
 
@@ -25,7 +25,7 @@ abstract class ApplicationDatabase: RoomDatabase() {
                     context.applicationContext,
                     ApplicationDatabase::class.java,
                     "weather_database"
-                ).build()
+                ).allowMainThreadQueries().build()
                 INSTANCE = instance
                 return instance
             }

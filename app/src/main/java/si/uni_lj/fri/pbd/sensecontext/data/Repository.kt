@@ -13,4 +13,12 @@ class Repository(private val databaseDao: DatabaseDao) {
     }
 
     fun fetchLocationsBetweenDate(from: Date, to: Date): List<Location>  = databaseDao.fetchLocationsBetweenDate(from, to)
+
+    suspend fun addRule(rule: Rule) {
+        databaseDao.add_rule(rule)
+    }
+
+    suspend fun addWeatherDescription(weatherDescription: WeatherDescription) {
+        databaseDao.add_weather_description(weatherDescription)
+    }
 }
