@@ -11,10 +11,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
-import com.jayway.jsonpath.JsonPath
+import com.google.gson.Gson
 import com.jayway.jsonpath.JsonPath.read
 import org.json.JSONArray
 import org.json.JSONObject
+import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.*
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
@@ -176,40 +177,19 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
             } catch (e: IOException) {
                 Log.d(TAG, e.toString())
             }
-            //creating json object
-            val json_contact: JSONObject = JSONObject(jsonString)
-            var rules:JSONArray= json_contact.getJSONArray("rules")
-            (0 until rules.length()).forEach {
-                val rule = rules.getJSONObject(it)
-                val aspect = rule.optString("aspect", "")
-                var min_slope = rule.optDouble("min_slope", 0.0)
-                val max_slope = rule.optDouble("max_slope", 0.0)
-                val elevation_min = rule.optDouble("elevation_min", 0.0)
-                val elevation_max = rule.optDouble("elevation_max", 0.0)
-                val user_hiking = rule.optBoolean("user_hiking", false)
-                val rule1 = dao.add_rule(Rule(0L,
-                    aspect as String?,
-                    min_slope as Double?,
-                    max_slope as Double?, elevation_min as Double?,
-                    elevation_max as Double?, user_hiking as Boolean
-                ))
 
-                val weather_desriptions = rule.getJSONArray("weather_descriptions")
-                (0 until weather_desriptions.length()).forEach {
-                    val wd = weather_desriptions.getJSONObject(it)
-                    val day_delay = wd.getInt("day_delay")
-                    val temp_avg_min = wd.getDouble("temp_avg_min")
-                    val temp_avg_max = wd.getDouble("temp_avg_max")
-                    val hour_min = wd.getInt("hour_min")
-                    val hour_max = wd.getInt("hour_max")
-                    val oblacnost = wd.getString("oblacnost")
-                    val vremenski_pojav = wd.getString("vremenski_pojav")
-                    val intenzivnost = wd.getString("intenzivnost")
-                    val elevation = wd.getString("elevation")
-                    val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, day_delay, temp_avg_min, temp_avg_max, hour_min, hour_max, oblacnost, vremenski_pojav, intenzivnost, elevation))
+            val rules = Gson().fromJson(jsonString, Rules::class.java)
+
+            for (rule in rules.rules) {
+                val rule1 = dao.add_rule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking))
+                for (wd in rule.weather_descriptions) {
+                    val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                        wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation))
                     dao.add_rule_weather_description_ref(RuleWeatherDescriptionRef(rule1, weather_desc1))
                 }
             }
+
+
 
 
             //val rule1 = dao.add_rule(Rule(0L, "S", 30.0, 45.0, null, null, true))
