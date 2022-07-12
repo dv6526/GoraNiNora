@@ -1,10 +1,12 @@
 package si.uni_lj.fri.pbd.sensecontext.Weather
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -16,7 +18,7 @@ class ParseWeatherXML {
 
     private val weather = ArrayList<WeatherHour>()
     private var weatherHour: WeatherHour? = null
-    private lateinit var text: String
+    private var text: String? = null
     private var date: Date? = null
     private lateinit var oblacnost: String
     private var vremenski_pojav: String? = null
@@ -45,50 +47,53 @@ class ParseWeatherXML {
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 val tagname = parser.name
                 when (eventType) {
-                    XmlPullParser.START_TAG -> if (tagname.equals("metData")) {
+                    XmlPullParser.START_TAG ->
+                        if (tagname.equals("metData")) {
                         //weatherHour = WeatherHour()
-                    }
+                        } else if (tagname.equals("rr_decodeText")) {
+                            Log.d(TAG, "here")
+                        }
                     XmlPullParser.TEXT -> text = parser.text
-                    XmlPullParser.END_TAG ->
+                    XmlPullParser.END_TAG -> {
                         if (tagname.equals("metData")) {
                             weatherHour = si.uni_lj.fri.pbd.sensecontext.data.WeatherHour(0, date!!, oblacnost, vremenski_pojav, intenzivnost, t_1000, t_1500, t_2000, t_2500, t_3000, meja_snezenja, w_1000, w_1500, w_2000, w_2500, w_3000)
                             weatherHour?.let { weather.add(it) }
                         } else if (tagname.equals("valid")) {
                             val formatter = SimpleDateFormat("dd.MM.yyyy H:mm")
-                            date = formatter.parse(text.replace(" CEST", ""))
-                        } else if (tagname.equals("nn_icon-wwsyn_icon")) {
-                            val list = text.split("_")
-                            oblacnost = list[0]
-                            if (list.size == 2) {
-                                val niz = list[1].replace("SH", "")
-                                val idx = firstCapital(niz)
-                                intenzivnost = niz.substring(0, idx)
-                                vremenski_pojav = niz.substring(idx)
-                            }
+                            date = formatter.parse(text!!.replace(" CEST", ""))
+                        } else if (tagname.equals("nn_icon")) { // količina oblačnosti
+                            oblacnost = text!!
+                        } else if (tagname.equals("wwsyn_icon")) {
+                            vremenski_pojav = text
+                        } else if (tagname.equals("rr_decodeText")) {
+                            intenzivnost = text
                         } else if (tagname.equals("t_level_3000_m")) {
-                            t_3000 = text.toInt()
+                            t_3000 = text!!.toInt()
                         } else if (tagname.equals("t_level_2500_m")) {
-                            t_2500 = text.toInt()
+                            t_2500 = text!!.toInt()
                         } else if (tagname.equals("t_level_2000_m")) {
-                            t_2000 = text.toInt()
+                            t_2000 = text!!.toInt()
                         } else if (tagname.equals("t_level_1500_m")) {
-                            t_1500 = text.toInt()
+                            t_1500 = text!!.toInt()
                         } else if (tagname.equals("t_level_1000_m")) {
-                            t_1000 = text.toInt()
+                            t_1000 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_3000_m")) {
-                            w_3000 = text.toInt()
+                            w_3000 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_2500_m")) {
-                            w_2500 = text.toInt()
+                            w_2500 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_2000_m")) {
-                            w_2000 = text.toInt()
+                            w_2000 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_1500_m")) {
-                            w_1500 = text.toInt()
+                            w_1500 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_1000_m")) {
-                            w_1000 = text.toInt()
+                            w_1000 = text!!.toInt()
                         } else if (tagname.equals("sl_alt")) {
-                            meja_snezenja = text.toInt()
+                            meja_snezenja = text!!.toInt()
                         }
+                        text = null
+                    }
                 }
+
                 eventType = parser.next()
             }
         } catch (e: XmlPullParserException) {
@@ -99,13 +104,4 @@ class ParseWeatherXML {
         return weather
     }
 
-    fun firstCapital(niz: String): Int {
-        var idx = 0
-        for (letter in niz) {
-            if (letter.isUpperCase())
-                break
-            idx += 1
-        }
-        return idx
-    }
 }
