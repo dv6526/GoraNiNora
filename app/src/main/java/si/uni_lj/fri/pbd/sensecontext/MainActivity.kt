@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.google.gson.Gson
 import com.jayway.jsonpath.JsonPath.read
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
@@ -36,6 +39,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
     private lateinit var binding: ActivityMainBinding
     lateinit var db: ApplicationDatabase
     lateinit var dao: DatabaseDao
+    val processingScope = CoroutineScope(Dispatchers.IO)
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +70,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         }
 
         requestPermissions()
-        prepopulateDatabaseWithRules()
+        processingScope.launch {  prepopulateDatabaseWithRules() }
     }
 
     override fun onStart() {
@@ -164,11 +168,12 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         }
     }
 
-    fun prepopulateDatabaseWithRules() {
+    suspend fun prepopulateDatabaseWithRules() {
         val pref = getSharedPreferences("pref", MODE_PRIVATE)
         if (!pref.getBoolean("rules_populated", false)) {
             db = ApplicationDatabase.getDatabase(this)
             dao = db.dao()
+            val repository = Repository(dao)
             lateinit var jsonString: String
             try {
                 jsonString = applicationContext.assets.open("rules.json")
@@ -181,11 +186,11 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
             val rules = Gson().fromJson(jsonString, Rules::class.java)
 
             for (rule in rules.rules) {
-                val rule1 = dao.add_rule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking))
+                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_name))
                 for (wd in rule.weather_descriptions) {
-                    val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                    val weather_desc1 = repository.addWeatherDescription(WeatherDescription(0L, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
                         wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation))
-                    dao.add_rule_weather_description_ref(RuleWeatherDescriptionRef(rule1, weather_desc1))
+                    repository.addRuleWeatherDescriptionRef(RuleWeatherDescriptionRef(rule1, weather_desc1))
                 }
             }
 
@@ -203,9 +208,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
              */
         }
 
-
-
-
-
     }
+
+
 }

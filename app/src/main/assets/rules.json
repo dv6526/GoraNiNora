@@ -6,6 +6,31 @@
     "elevation_min": null,
     "elevation_max": null,
     "user_hiking": true,
+    "notification_name": "notification_name",
+    "notification_text": "notification_text",
+    "weather_descriptions": [
+      {
+        "day_delay": 0,
+        "temp_avg_min": -20.0,
+        "temp_avg_max": -5.0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1000"
+      }
+    ]
+  },
+  {
+    "aspect": "S",
+    "min_slope": 30.0,
+    "max_slope": 45.0,
+    "elevation_min": null,
+    "elevation_max": null,
+    "user_hiking": true,
+    "notification_name": "notification_name2",
+    "notification_text": "notification_text2",
     "weather_descriptions": [
       {
         "day_delay": 0,
@@ -32,36 +57,15 @@
     ]
   },
   {
-    "aspect": "S",
-    "min_slope": 30.0,
-    "max_slope": 45.0,
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
     "elevation_min": null,
     "elevation_max": null,
-    "user_hiking": true,
-    "weather_descriptions": [
-      {
-        "day_delay": 0,
-        "temp_avg_min": 10.0,
-        "temp_avg_max": 15.0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "oblacnost": null,
-        "vremenski_pojav": null,
-        "intenzivnost": null,
-        "elevation": "1000"
-      },
-      {
-        "day_delay": 0,
-        "temp_avg_min": null,
-        "temp_avg_max": null,
-        "hour_min": 8,
-        "hour_max": 12,
-        "oblacnost": null,
-        "vremenski_pojav": null,
-        "intenzivnost": null,
-        "elevation": "1000"
-      }
-    ]
+    "user_hiking": false,
+    "notification_name": "notification_name",
+    "notification_text": "notification_text",
+    "weather_descriptions": []
   }
 ]
 }
