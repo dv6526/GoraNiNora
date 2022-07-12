@@ -29,6 +29,7 @@ class LocationUpdatesService : Service() {
         private const val CHANNEL_ID: String = "Sensor Data"
         var locationUpdatesInterval: Long = 0
         var user_is_hiking = false // when LocationUpdatesReceiver determines user is hiking based on GPS coordinates, user_is_hiking is set to TRUE
+        var av_area_id: Int? = null
     }
 
     lateinit var fusedLocationClient: FusedLocationProviderClient

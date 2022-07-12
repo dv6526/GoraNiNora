@@ -12,12 +12,15 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.jayway.jsonpath.JsonPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
+import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Areas.Areas
+import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R
@@ -65,7 +68,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     //Log.d(TAG, "Cur date $curDate")
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
-                    if (isInsideMountainsFence(location.latitude, location.longitude)) {
+                    if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
                         sendJobAPI(location.latitude, location.longitude, context)
                     }
                     prevDate = curDate
@@ -75,23 +78,33 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         }
     }
 
-    fun isInsideMountainsFence(lat: Double, lon: Double): Boolean {
-        val pts: MutableList<LatLng> = ArrayList()
+    fun isInsideMountainsFence(lat: Double, lon: Double, context: Context): Boolean {
 
-        pts.add(LatLng(46.333164269796875, 14.328845691769393))
-        pts.add(LatLng(46.32889716839761, 14.342621517269881))
-        pts.add(LatLng(46.31736840370528, 14.334853839962753))
-        pts.add(LatLng(46.321814230575065, 14.321464252560409))
-
-
-        /*
-        pts.add(LatLng(46.32455349101422,14.339970970425394 ))
-        pts.add(LatLng(46.319752222784885,14.341129684719828 ))
-        pts.add(LatLng(46.3209377602873,14.337138557705668 ))
-
-         */
         val loc = LatLng(lat, lon)
-        return PolyUtil.containsLocation(loc, pts, true);
+        lateinit var jsonString: String
+        try {
+            jsonString = context.assets.open("areas.json")
+                .bufferedReader()
+                .use { it.readText() }
+        } catch (e: IOException) {
+            Log.d(TAG, e.toString())
+        }
+
+        val areas = Gson().fromJson(jsonString, Areas::class.java)
+        var isInside = false
+        for (areasItem in areas) {
+            var pts: MutableList<LatLng> = ArrayList()
+            for (point in areasItem.geometry) {
+                pts.add(LatLng(point[1].toDouble(), point[0].toDouble()))
+            }
+            if (PolyUtil.containsLocation(loc, pts, true) && areasItem.av_area_id != 5) { // 5 - ostala območja
+                isInside = true
+                LocationUpdatesService.av_area_id = areasItem.av_area_id
+            }
+        }
+
+
+        return isInside
     }
 
     fun sendJobAPI(lat: Double, lon: Double, context: Context) {
