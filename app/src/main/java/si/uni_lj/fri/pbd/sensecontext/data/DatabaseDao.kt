@@ -35,3 +35,10 @@ interface DatabaseDao {
     @Query("SELECT * FROM rule_table")
     fun getRulesWithWeatherDescription(): List<RuleWithWeatherDescription>
 }
+
+
+// if user is HIKING and the PROBLEM is present in av_area_id
+// if we know the PROBLEM, we know which AVALANCHE_TYPES are more likely to happen
+// true -> we check the aspect of the user HIKING
+// user is located in elevation_from - elevation_to which is defined by PROBLEM
+//

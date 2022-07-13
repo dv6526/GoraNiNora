@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Areas.Areas
-import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
 import si.uni_lj.fri.pbd.sensecontext.R

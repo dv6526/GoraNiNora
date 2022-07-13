@@ -1,4 +1,4 @@
-package si.uni_lj.fri.pbd.sensecontext.JsonObjects
+package si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 
 data class WeatherDescription(
     val day_delay: Int, // -1 -> prejsni dan, 0 -> danes, 1 -> jutri

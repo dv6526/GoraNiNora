@@ -20,6 +20,33 @@
         "intenzivnost": null,
         "elevation": "1000"
       }
+    ],
+    "problems": [
+      {
+        "problem_id": 1,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "aspect": true,
+        "check_elevation": true
+      }
+    ],
+    "patterns":[
+      {
+        "pattern_id": 2,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12
+      }
+    ],
+    "dangers": [
+      {
+        "value": 3,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "check_elevation": true
+      }
     ]
   },
   {

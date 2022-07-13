@@ -12,13 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.google.gson.Gson
-import com.jayway.jsonpath.JsonPath.read
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
-import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
+import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.*
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
