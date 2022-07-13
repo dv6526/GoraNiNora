@@ -28,6 +28,8 @@ import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -67,9 +69,12 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     //Log.d(TAG, "Cur date $curDate")
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
-                    if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
+
+                    //if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
                         sendJobAPI(location.latitude, location.longitude, context)
-                    }
+                    //}
+
+
                     prevDate = curDate
                 }
 
@@ -211,6 +216,9 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     saveLocationDatabase(lat, lon, elevation, slope, aspect, context)
                     if (!LocationUpdatesService.user_is_hiking)
                         detectUserIsHiking(context)
+                    else {
+                        showRules(context)
+                    }
 
                 }
             }
@@ -239,7 +247,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             val acumulativeHeight = calcAccHeight(loc)
             if (acumulativeHeight > 0) {
                 LocationUpdatesService.user_is_hiking = true
-                showNotification("Application detected that you might be HIKING.", context)
+                showNotification("Detected HIKING in MOUNTAINS!","Application detected that you might be HIKING.", context)
             }
             Log.d(TAG, acumulativeHeight.toString())
         }
@@ -260,11 +268,130 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         return height
     }
 
-    private fun showNotification(warningText: String, context: Context) {
+    private fun showNotification(warningTitle:String, warningText: String, context: Context) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_WARNING).setSmallIcon(
-            R.drawable.ic_launcher_foreground).setContentTitle("Detected HIKING in MOUNTAINS!").setContentText(warningText)
+            R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText)
         with(NotificationManagerCompat.from(context)) {
             notify(DetectedTransitionReceiver.NOTIFICATION_ID, builder.build())
+        }
+    }
+
+    private fun showRules(context: Context) {
+        val db = ApplicationDatabase.getDatabase(context)
+        val dao = db.dao()
+        val repository = Repository(dao)
+
+        val loc =repository.getLatestLocation()
+
+        val rwd = repository.getRulesWithWeatherDescription()
+        for (rule in rwd) {
+            var rule_is_match = true
+            val aspects = rule.rule.aspect
+            if (aspects != null) {
+                for (aspect in aspects.split(",")) {
+                    when (aspect) {
+                        "N" -> {
+                            if (loc.aspect in 0.0..90.0 || loc.aspect in 270.0..360.0)
+                                break
+                            else
+                                rule_is_match = false
+                        }
+                        "S" -> {
+                            if (loc.aspect in 90.0..270.0)
+                                break
+                            else
+                                rule_is_match = false
+                        }
+                    }
+                }
+            }
+
+            val min_slope = rule.rule.min_slope
+            if (min_slope != null && loc.slope < min_slope) {
+                rule_is_match = false
+
+            }
+
+            val max_slope = rule.rule.max_slope
+            if (max_slope != null && loc.slope > max_slope) {
+                rule_is_match = false
+            }
+
+            val elevation_min = rule.rule.elevation_min
+            if (elevation_min != null && loc.elevation < elevation_min) {
+                rule_is_match = false
+
+            }
+
+            val elevation_max = rule.rule.elevation_max
+            if (elevation_max != null && loc.elevation > elevation_max) {
+                rule_is_match = false
+            }
+
+            val userHiking = rule.rule.user_hiking
+            if (LocationUpdatesService.user_is_hiking != userHiking)
+                rule_is_match = false
+
+            val wds = rule.weather_descriptions
+            for (wd in wds) {
+                val cal1 = Calendar.getInstance()
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                cal1.add(Calendar.DATE, wd.day_delay)
+                cal1.set(Calendar.HOUR_OF_DAY, wd.hour_min)
+                cal1.set(Calendar.MINUTE, 0)
+                cal1.set(Calendar.SECOND, 0)
+                cal1.set(Calendar.MILLISECOND, 0)
+                val str1 = sdf.format(cal1.time)
+                val cal2 = Calendar.getInstance()
+                cal2.add(Calendar.DATE, wd.day_delay)
+                cal2.set(Calendar.HOUR_OF_DAY, wd.hour_max)
+                cal2.set(Calendar.MINUTE, 0)
+                cal2.set(Calendar.SECOND, 0)
+                cal2.set(Calendar.MILLISECOND, 0)
+                val str2 = sdf.format(cal2.time)
+                val whs = repository.getWeatherHoursBetweenDate(cal1.time, cal2.time)
+                //check if weather description matches weather from ARSO
+
+                // AVG TEMP
+                var vremenski_pojav_occured = false
+                var oblacnost_occured = false
+                var temp = 0
+                for (wh in whs) {
+                    when (wd.elevation) {
+                        "1000" -> temp += wh.t_1000
+                        "1500" -> temp += wh.t_1500
+                        "2000" -> temp += wh.t_2000
+                        "2500" -> temp += wh.t_2500
+                        "3000" -> temp += wh.t_3000
+                    }
+
+
+                    if (wd.vremenski_pojav != null && !vremenski_pojav_occured && !wd.vremenski_pojav.equals(wh.vremenski_pojav)) {
+                        rule_is_match = false
+                    } else if (wd.vremenski_pojav != null && wd.vremenski_pojav.equals(wh.vremenski_pojav)) {
+                        rule_is_match = true
+                        vremenski_pojav_occured = true
+                    }
+
+                    if (wd.oblacnost != null && !oblacnost_occured && !wd.oblacnost.equals(wh.oblacnost)) {
+                        rule_is_match = false
+                     }else if (wd.oblacnost != null && wd.oblacnost.equals(wh.oblacnost)) {
+                        rule_is_match = true
+                        oblacnost_occured = true
+                    }
+                }
+
+                temp = temp/whs.size
+                if (wd.temp_avg_min != null && temp < wd.temp_avg_min)
+                    rule_is_match = false
+                if (wd.temp_avg_max != null && temp > wd.temp_avg_max)
+                    rule_is_match = false
+            }
+
+            if(rule_is_match) {
+                showNotification(rule.rule.notification_name, rule.rule.notification_text, context)
+            }
+
         }
     }
 

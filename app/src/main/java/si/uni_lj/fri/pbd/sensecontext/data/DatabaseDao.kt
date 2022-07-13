@@ -18,9 +18,14 @@ interface DatabaseDao {
     @Query("SELECT * FROM location_table ORDER BY id ASC")
     fun readAllDataLocation(): List<Location>
 
+    @Query("SELECT * FROM location_table ORDER BY id DESC LIMIT 1")
+    fun getLatestLocation(): Location
+
     @Query("SELECT * FROM location_table WHERE date BETWEEN :from AND :to")
     fun fetchLocationsBetweenDate(from: Date, to: Date): List<Location>
 
+    @Query("SELECT * FROM weather_table WHERE date BETWEEN :from AND :to")
+    fun getWeatherHoursBetweenDate(from: Date, to: Date): List<WeatherHour>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add_rule(rule: Rule): Long
@@ -34,6 +39,10 @@ interface DatabaseDao {
     @Transaction
     @Query("SELECT * FROM rule_table")
     fun getRulesWithWeatherDescription(): List<RuleWithWeatherDescription>
+
+    @Transaction
+    @Query("SELECT * FROM rule_table WHERE NOT user_hiking")
+    fun getRulesWithWeatherDescriptionNotHiking(): List<RuleWithWeatherDescription>
 }
 
 

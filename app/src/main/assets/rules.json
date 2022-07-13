@@ -1,8 +1,8 @@
 {"rules":[
   {
     "aspect": "S",
-    "min_slope": 30.0,
-    "max_slope": 45.0,
+    "min_slope": -10,
+    "max_slope": 10,
     "elevation_min": null,
     "elevation_max": null,
     "user_hiking": true,
@@ -11,11 +11,11 @@
     "weather_descriptions": [
       {
         "day_delay": 0,
-        "temp_avg_min": -20.0,
-        "temp_avg_max": -5.0,
+        "temp_avg_min": 16,
+        "temp_avg_max": 19,
         "hour_min": 8,
-        "hour_max": 12,
-        "oblacnost": null,
+        "hour_max": 11,
+        "oblacnost": "clear",
         "vremenski_pojav": null,
         "intenzivnost": null,
         "elevation": "1000"

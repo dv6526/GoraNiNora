@@ -191,8 +191,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
                 }
             }
 
-
-
+            testRules()
 
             //val rule1 = dao.add_rule(Rule(0L, "S", 30.0, 45.0, null, null, true))
             //val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, 0, 10.0, 15.0, 8, 12,null, null, null, "1000"))
@@ -205,6 +204,15 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
              */
         }
 
+    }
+
+    fun testRules() {
+        val db = ApplicationDatabase.getDatabase(this)
+        val weatherDao = db.dao()
+        val repository = Repository(weatherDao)
+
+        val rwd = repository.getRulesWithWeatherDescription()
+        val rwdnh = repository.getRulesWithWeatherDescriptionNotHiking()
     }
 
 

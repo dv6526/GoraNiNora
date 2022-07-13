@@ -8,9 +8,13 @@ class Repository(private val databaseDao: DatabaseDao) {
         databaseDao.add_weather_hour(weatherHour)
     }
 
+    fun getWeatherHoursBetweenDate(from: Date, to: Date): List<WeatherHour> = databaseDao.getWeatherHoursBetweenDate(from, to)
+
     suspend fun addLocation(location: Location) {
         databaseDao.add_location(location)
     }
+
+    fun getLatestLocation(): Location = databaseDao.getLatestLocation()
 
     fun fetchLocationsBetweenDate(from: Date, to: Date): List<Location>  = databaseDao.fetchLocationsBetweenDate(from, to)
 
@@ -24,5 +28,13 @@ class Repository(private val databaseDao: DatabaseDao) {
 
     suspend fun addRuleWeatherDescriptionRef(ruleWeatherDescriptionRef: RuleWeatherDescriptionRef) {
         databaseDao.add_rule_weather_description_ref(ruleWeatherDescriptionRef)
+    }
+
+    fun getRulesWithWeatherDescription(): List<RuleWithWeatherDescription> {
+        return databaseDao.getRulesWithWeatherDescription()
+    }
+
+    fun getRulesWithWeatherDescriptionNotHiking(): List<RuleWithWeatherDescription> {
+        return databaseDao.getRulesWithWeatherDescriptionNotHiking()
     }
 }
