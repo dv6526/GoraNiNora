@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class WeatherDescription(
         @PrimaryKey(autoGenerate = true)
         val weather_description_id: Long,
+        val rule_id: Long,
         val day_delay: Int,
         val temp_avg_min: Double?,
         val temp_avg_max: Double?,

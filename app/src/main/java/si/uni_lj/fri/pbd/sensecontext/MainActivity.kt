@@ -185,9 +185,20 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
             for (rule in rules.rules) {
                 val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_name))
                 for (wd in rule.weather_descriptions) {
-                    val weather_desc1 = repository.addWeatherDescription(WeatherDescription(0L, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
-                        wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation))
-                    repository.addRuleWeatherDescriptionRef(RuleWeatherDescriptionRef(rule1, weather_desc1))
+                    repository.addWeatherDescription(WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                        wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation
+                    ))
+                }
+                for (pattern in rule.patterns) {
+                    repository.addPatternRule(PatternRule(0L, rule1, pattern!!.av_area_id, pattern.day_delay, pattern.hour_max, pattern.hour_min, pattern.pattern_id))
+                }
+
+                for (problem in rule.problems) {
+                    repository.addProblemRule(ProblemRule(0L, rule1, problem!!.av_area_id, problem.check_elevation, problem.day_delay, problem.hour_max, problem.hour_min, problem.problem_id))
+                }
+
+                for (danger in rule.dangers) {
+                    repository.addDangerRule(DangerRule(0L, rule1, danger!!.av_area_id, danger.check_elevation, danger.day_delay, danger.hour_max, danger.hour_min, danger.value))
                 }
             }
 
@@ -198,7 +209,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
             //dao.add_rule_weather_description_ref(RuleWeatherDescriptionRef(rule1, weather_desc1))
             /*
             with(pref.edit()) {
-                putBoolean("rules_populated", true)
+                putBoolean("rules_populated", true
                 apply()
             }
              */
@@ -211,8 +222,8 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         val weatherDao = db.dao()
         val repository = Repository(weatherDao)
 
-        val rwd = repository.getRulesWithWeatherDescription()
-        val rwdnh = repository.getRulesWithWeatherDescriptionNotHiking()
+        val rwd = repository.getRulesWithLists()
+        val rwdnh = repository.getRulesNotHiking()
     }
 
 

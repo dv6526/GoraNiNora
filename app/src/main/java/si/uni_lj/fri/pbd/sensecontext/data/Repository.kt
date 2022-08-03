@@ -26,15 +26,23 @@ class Repository(private val databaseDao: DatabaseDao) {
         return databaseDao.add_weather_description(weatherDescription)
     }
 
-    suspend fun addRuleWeatherDescriptionRef(ruleWeatherDescriptionRef: RuleWeatherDescriptionRef) {
-        databaseDao.add_rule_weather_description_ref(ruleWeatherDescriptionRef)
+    suspend fun addPatternRule(patternRule: PatternRule): Long {
+        return databaseDao.addPatternRule(patternRule)
+    }
+    suspend fun addProblemRule(problemRule: ProblemRule): Long {
+        return databaseDao.addProblemRule(problemRule)
+    }
+    suspend fun addDangerRule(dangerRule: DangerRule): Long {
+        return databaseDao.addDangerRule(dangerRule)
     }
 
-    fun getRulesWithWeatherDescription(): List<RuleWithWeatherDescription> {
-        return databaseDao.getRulesWithWeatherDescription()
+
+    fun getRulesWithLists(): List<RuleWithLists> {
+        return databaseDao.getRules()
     }
 
-    fun getRulesWithWeatherDescriptionNotHiking(): List<RuleWithWeatherDescription> {
-        return databaseDao.getRulesWithWeatherDescriptionNotHiking()
+    fun getRulesNotHiking(): List<RuleWithLists> {
+        return databaseDao.getRulesNotHiking()
     }
+
 }

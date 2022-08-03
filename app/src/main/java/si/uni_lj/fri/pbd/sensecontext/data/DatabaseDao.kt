@@ -1,6 +1,5 @@
 package si.uni_lj.fri.pbd.sensecontext.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.util.*
 
@@ -34,20 +33,30 @@ interface DatabaseDao {
     suspend fun add_weather_description(weatherDescription: WeatherDescription): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun add_rule_weather_description_ref(ruleWeatherDescriptionRef: RuleWeatherDescriptionRef)
+    suspend fun addPatternRule(patternRule: PatternRule): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addProblemRule(problemRule: ProblemRule): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addDangerRule(dangerRule: DangerRule): Long
+
 
     @Transaction
     @Query("SELECT * FROM rule_table")
-    fun getRulesWithWeatherDescription(): List<RuleWithWeatherDescription>
+    fun getRules(): List<RuleWithLists>
 
     @Transaction
     @Query("SELECT * FROM rule_table WHERE NOT user_hiking")
-    fun getRulesWithWeatherDescriptionNotHiking(): List<RuleWithWeatherDescription>
+    fun getRulesNotHiking(): List<RuleWithLists>
+
+    @Transaction
+    @Query("SELECT * FROM rule_table WHERE user_hiking")
+    fun getRulesHiking(): List<RuleWithLists>
 }
 
 
 // if user is HIKING and the PROBLEM is present in av_area_id
-// if we know the PROBLEM, we know which AVALANCHE_TYPES are more likely to happen
 // true -> we check the aspect of the user HIKING
 // user is located in elevation_from - elevation_to which is defined by PROBLEM
 //

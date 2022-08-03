@@ -1,11 +1,12 @@
 {"rules":[
   {
-    "aspect": "S",
+    "aspect": "N,NE,E,SE,S,SW,W,N",
     "min_slope": -10,
     "max_slope": 10,
     "elevation_min": null,
     "elevation_max": null,
     "user_hiking": true,
+    "av_area_id": 2,
     "notification_name": "notification_name",
     "notification_text": "notification_text",
     "weather_descriptions": [
@@ -18,7 +19,9 @@
         "oblacnost": "clear",
         "vremenski_pojav": null,
         "intenzivnost": null,
-        "elevation": "1000"
+        "elevation": "1000",
+        "av_area_id": 2
+
       }
     ],
     "problems": [
@@ -27,8 +30,8 @@
         "day_delay": 0,
         "hour_min": 8,
         "hour_max": 12,
-        "aspect": true,
-        "check_elevation": true
+        "check_elevation": true,
+        "av_area_id": 3
       }
     ],
     "patterns":[
@@ -36,16 +39,26 @@
         "pattern_id": 2,
         "day_delay": 0,
         "hour_min": 8,
-        "hour_max": 12
+        "hour_max": 12,
+        "av_area_id": 2
       }
     ],
     "dangers": [
+      {
+        "value": 2,
+        "day_delay": -1,
+        "hour_min": 8,
+        "hour_max": 12,
+        "check_elevation": true,
+        "av_area_id": 2
+      },
       {
         "value": 3,
         "day_delay": 0,
         "hour_min": 8,
         "hour_max": 12,
-        "check_elevation": true
+        "check_elevation": true,
+        "av_area_id": 2
       }
     ]
   },
@@ -56,6 +69,7 @@
     "elevation_min": null,
     "elevation_max": null,
     "user_hiking": true,
+    "av_area_id": 2,
     "notification_name": "notification_name2",
     "notification_text": "notification_text2",
     "weather_descriptions": [
@@ -68,7 +82,8 @@
         "oblacnost": null,
         "vremenski_pojav": null,
         "intenzivnost": null,
-        "elevation": "1000"
+        "elevation": "1000",
+        "av_area_id": 2
       },
       {
         "day_delay": 0,
@@ -79,7 +94,46 @@
         "oblacnost": null,
         "vremenski_pojav": null,
         "intenzivnost": null,
-        "elevation": "1000"
+        "elevation": "1000",
+        "av_area_id": 2
+      }
+    ],
+    "problems": [
+      {
+        "problem_id": 1,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "aspect": true,
+        "check_elevation": true,
+        "av_area_id": 3
+      }
+    ],
+    "patterns":[
+      {
+        "pattern_id": 2,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "av_area_id": 2
+      }
+    ],
+    "dangers": [
+      {
+        "value": 2,
+        "day_delay": -1,
+        "hour_min": 8,
+        "hour_max": 12,
+        "check_elevation": true,
+        "av_area_id": 2
+      },
+      {
+        "value": 3,
+        "day_delay": 0,
+        "hour_min": 8,
+        "hour_max": 12,
+        "check_elevation": true,
+        "av_area_id": 2
       }
     ]
   },
@@ -90,9 +144,13 @@
     "elevation_min": null,
     "elevation_max": null,
     "user_hiking": false,
+    "av_area_id": 2,
     "notification_name": "notification_name",
     "notification_text": "notification_text",
-    "weather_descriptions": []
+    "weather_descriptions": [],
+    "problems": [],
+    "patterns": [],
+    "dangers": []
   }
 ]
 }

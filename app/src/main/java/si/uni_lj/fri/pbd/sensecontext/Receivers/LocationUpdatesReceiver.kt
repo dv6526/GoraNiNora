@@ -29,7 +29,6 @@ import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.time.DayOfWeek
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -283,7 +282,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
 
         val loc =repository.getLatestLocation()
 
-        val rwd = repository.getRulesWithWeatherDescription()
+        val rwd = repository.getRulesWithLists()
         for (rule in rwd) {
             var rule_is_match = true
             val aspects = rule.rule.aspect
