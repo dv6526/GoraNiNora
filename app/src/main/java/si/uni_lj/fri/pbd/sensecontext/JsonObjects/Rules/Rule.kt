@@ -1,6 +1,7 @@
 package si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 
 data class Rule(
+    var av_area_id: Int?,
     val aspect: String?, // usmerjenost pobočja (N,NE,E,SE,S,SW,W,NW)
     val min_slope: Double?, // min naklon, na katerem se uporabnik nahaja
     val max_slope: Double?, // max naklon, na katerem se uporabnik nahaja
