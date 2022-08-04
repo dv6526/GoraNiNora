@@ -1,6 +1,11 @@
 package si.uni_lj.fri.pbd.sensecontext.data
 
 import androidx.room.*
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.PatternBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.ProblemBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.rules.*
 import java.util.*
 
 @Dao
@@ -40,6 +45,18 @@ interface DatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addDangerRule(dangerRule: DangerRule): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addAvalancheBulletin(avalancheBulletin: AvalancheBulletin): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addProblem(problemBulletin: ProblemBulletin): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addDanger(dangerBulletin: DangerBulletin): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPattern(patternBulletin: PatternBulletin): Long
 
 
     @Transaction

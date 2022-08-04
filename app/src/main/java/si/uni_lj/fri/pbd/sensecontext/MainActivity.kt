@@ -16,8 +16,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
+import si.uni_lj.fri.pbd.sensecontext.Weather.AvalancheBulletinWorker
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.*
+import si.uni_lj.fri.pbd.sensecontext.data.rules.DangerRule
+import si.uni_lj.fri.pbd.sensecontext.data.rules.PatternRule
+import si.uni_lj.fri.pbd.sensecontext.data.rules.ProblemRule
+import si.uni_lj.fri.pbd.sensecontext.data.rules.Rule
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.fragments.HomeFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.SensorsFragment
@@ -98,7 +103,9 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
 
     fun setWeatherUpdatesTest() {
         val workRequest = OneTimeWorkRequestBuilder<WeatherWorker>().build()
+        val avalancheBulletinRequest = OneTimeWorkRequestBuilder<AvalancheBulletinWorker>().build()
         WorkManager.getInstance().enqueue(workRequest)
+        WorkManager.getInstance().enqueue(avalancheBulletinRequest)
     }
 
     fun setWeatherUpdates() {

@@ -1,5 +1,10 @@
 package si.uni_lj.fri.pbd.sensecontext.data
 
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.PatternBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.bulletin.ProblemBulletin
+import si.uni_lj.fri.pbd.sensecontext.data.rules.*
 import java.util.*
 
 class Repository(private val databaseDao: DatabaseDao) {
@@ -36,6 +41,21 @@ class Repository(private val databaseDao: DatabaseDao) {
         return databaseDao.addDangerRule(dangerRule)
     }
 
+    suspend fun addAvalancheBulletin(avalancheBulletin: AvalancheBulletin): Long {
+        return databaseDao.addAvalancheBulletin(avalancheBulletin)
+    }
+
+    suspend fun addProblem(problemBulletin: ProblemBulletin): Long {
+        return databaseDao.addProblem(problemBulletin)
+    }
+
+    suspend fun addDanger(dangerBulletin: DangerBulletin): Long {
+        return databaseDao.addDanger(dangerBulletin)
+    }
+
+    suspend fun addPattern(patternBulletin: PatternBulletin): Long {
+        return databaseDao.addPattern(patternBulletin)
+    }
 
     fun getRulesWithLists(): List<RuleWithLists> {
         return databaseDao.getRules()
