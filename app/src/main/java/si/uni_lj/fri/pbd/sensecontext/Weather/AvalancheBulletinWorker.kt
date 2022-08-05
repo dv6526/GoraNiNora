@@ -84,9 +84,10 @@ class AvalancheBulletinWorker (ctx: Context, params: WorkerParameters): Coroutin
                         PatternBulletin(
                             0L,
                             av_id,
+                            pattern.pattern,
                             pattern.av_area_id,
                             Date.from(Instant.parse(pattern.valid_end)),
-                            Date.from(Instant.parse(pattern.valid_end))
+                            Date.from(Instant.parse(pattern.valid_start))
                         )
                     )
                 }
@@ -96,6 +97,7 @@ class AvalancheBulletinWorker (ctx: Context, params: WorkerParameters): Coroutin
                         ProblemBulletin(
                             0L,
                             av_id,
+                            problem.problem_id,
                             problem.av_area_id,
                             problem.elevation_from,
                             problem.elevation_to,

@@ -27,6 +27,7 @@ import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
+import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -68,10 +69,11 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     //Log.d(TAG, "Cur date $curDate")
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
-
+                    if (isInsideMountainsFence(46.345664175687425, 13.627491787033, context)) {
                     //if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
-                        sendJobAPI(location.latitude, location.longitude, context)
-                    //}
+                        //sendJobAPI(location.latitude, location.longitude, context)
+                        sendJobAPI(46.345664175687425, 13.627491787033, context) //this coordinate is inside av_area_id 2
+                    }
 
 
                     prevDate = curDate
@@ -282,7 +284,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
 
         val loc =repository.getLatestLocation()
 
-        val rwd = repository.getRulesWithLists()
+        val rwd = repository.getRulesHiking()
         for (rule in rwd) {
             var rule_is_match = true
             val aspects = rule.rule.aspect
@@ -331,6 +333,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             if (LocationUpdatesService.user_is_hiking != userHiking)
                 rule_is_match = false
 
+            //preveri, če se ujemajo vsa pravila za vreme
             val wds = rule.weather_descriptions
             for (wd in wds) {
                 val cal1 = Calendar.getInstance()
@@ -387,11 +390,110 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     rule_is_match = false
             }
 
+            //preveri, če se ujemajo vsi patterni
+            val pts = rule.patternRules
+            for (pt in pts) {
+                val cal1 = Calendar.getInstance()
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                cal1.add(Calendar.DATE, pt.day_delay)
+                //cal1.add(Calendar.DATE, -86)
+                cal1.set(Calendar.HOUR_OF_DAY, pt.hour_min)
+                cal1.set(Calendar.MINUTE, 0)
+                cal1.set(Calendar.SECOND, 0)
+                cal1.set(Calendar.MILLISECOND, 0)
+                val str1 = sdf.format(cal1.time)
+                val cal2 = Calendar.getInstance()
+                cal2.add(Calendar.DATE, pt.day_delay)
+                cal2.set(Calendar.HOUR_OF_DAY, pt.hour_max)
+                cal2.set(Calendar.MINUTE, 0)
+                cal2.set(Calendar.SECOND, 0)
+                cal2.set(Calendar.MILLISECOND, 0)
+                val str2 = sdf.format(cal2.time)
+                //vzames bilten
+                val bulletin = repository.getLatestBulletin()
+                //val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_id, 1)
+                val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_id, LocationUpdatesService.av_area_id!!)
+
+                if (pts2.size == 0) {
+                    //ni patterna za trenutno območje na katerem se nahajamo
+                    rule_is_match = false
+                }
+            }
+
+
+            //preveri, če se ujemajo vsi dangerji
+            val dangers = rule.dangerRules
+            for (danger in dangers) {
+                val cal1 = Calendar.getInstance()
+                cal1.add(Calendar.DATE, danger.day_delay)
+                cal1.set(Calendar.HOUR_OF_DAY, danger.hour_min)
+                cal1.set(Calendar.MINUTE, 0)
+                cal1.set(Calendar.SECOND, 0)
+                cal1.set(Calendar.MILLISECOND, 0)
+                val cal2 = Calendar.getInstance()
+                cal2.add(Calendar.DATE, danger.day_delay)
+                cal2.set(Calendar.HOUR_OF_DAY, danger.hour_max)
+                cal2.set(Calendar.MINUTE, 0)
+                cal2.set(Calendar.SECOND, 0)
+                cal2.set(Calendar.MILLISECOND, 0)
+                val bulletin = repository.getLatestBulletin()
+                val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, LocationUpdatesService.av_area_id!!, loc.elevation, danger.value)
+                //val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1, loc.elevation, 2)
+                if (dangers2.size == 0) {
+                    rule_is_match = false
+                }
+            }
+
+            //preveri, če se ujemajo vsi problemi
+            val problems = rule.problemRules
+            for (problem in problems) {
+                val cal1 = Calendar.getInstance()
+                cal1.add(Calendar.DATE, problem.day_delay)
+                cal1.set(Calendar.HOUR_OF_DAY, problem.hour_min)
+                cal1.set(Calendar.MINUTE, 0)
+                cal1.set(Calendar.SECOND, 0)
+                cal1.set(Calendar.MILLISECOND, 0)
+                val cal2 = Calendar.getInstance()
+                cal2.add(Calendar.DATE, problem.day_delay)
+                cal2.set(Calendar.HOUR_OF_DAY, problem.hour_max)
+                cal2.set(Calendar.MINUTE, 0)
+                cal2.set(Calendar.SECOND, 0)
+                cal2.set(Calendar.MILLISECOND, 0)
+                val bulletin = repository.getLatestBulletin()
+                val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, LocationUpdatesService.av_area_id!!, problem.problem_id, loc.elevation)
+                //val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1 , 3, 2500.0)
+                if (problems2.size == 0) {
+                    rule_is_match = false
+                }
+            }
+
             if(rule_is_match) {
-                showNotification(rule.rule.notification_name, rule.rule.notification_text, context)
+                processingScope.launch {
+                    // rule shrani, če danes še ni bilo ujemanja
+                    val cal1 = Calendar.getInstance()
+                    cal1.set(Calendar.HOUR_OF_DAY, 0)
+                    cal1.set(Calendar.MINUTE, 0)
+                    cal1.set(Calendar.SECOND, 0)
+                    cal1.set(Calendar.MILLISECOND, 0)
+                    val matched_rules = repository.getRuleByIdNewerThan(rule.rule.rule_id, cal1.time)
+                    // danes še nisi izdal opozorila za rule_id
+                    if (matched_rules.size == 0) {
+                        repository.addMatchedRule(
+                            MatchedRule(0L, rule.rule.rule_id, Calendar.getInstance().time, false)
+                        )
+                    }
+                }
+
+                //showNotification(rule.rule.notification_name, rule.rule.notification_text, context)
             }
 
         }
+
+        //poglej katera pravila so se matchala, shrani si idje
+        //prenesi vsa pravila od danes
+        //poglej, če se je pojavilo kaksno novo pravilo
+        //poslji notification
+        //ko odpre notificaiton se odpre stran s pravili
     }
 
 }

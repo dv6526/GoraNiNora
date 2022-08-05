@@ -10,12 +10,9 @@ import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.PatternBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.ProblemBulletin
-import si.uni_lj.fri.pbd.sensecontext.data.rules.DangerRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.PatternRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.ProblemRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.Rule
+import si.uni_lj.fri.pbd.sensecontext.data.rules.*
 
-@Database(entities = [WeatherHour::class, Location::class, Rule::class, WeatherDescription::class, DangerRule::class, PatternRule::class, ProblemRule::class, AvalancheBulletin::class, DangerBulletin::class, PatternBulletin::class, ProblemBulletin::class], version = 1, exportSchema = false)
+@Database(entities = [WeatherHour::class, Location::class, Rule::class, WeatherDescription::class, DangerRule::class, PatternRule::class, ProblemRule::class, AvalancheBulletin::class, DangerBulletin::class, PatternBulletin::class, ProblemBulletin::class, MatchedRule::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ApplicationDatabase: RoomDatabase() {
 

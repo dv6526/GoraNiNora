@@ -9,9 +9,10 @@ data class ProblemBulletin(
     @PrimaryKey(autoGenerate = true)
     var prob_id: Long,
     var av_bulletin_id: Long,
+    var problem: Int,
     var av_area_id: Int,
-    var elevation_from: Int,
-    var elevation_to: Int,
+    var elevation_from: Double,
+    var elevation_to: Double,
     var valid_end: Date,
     var valid_start: Date
 )

@@ -57,12 +57,40 @@ class Repository(private val databaseDao: DatabaseDao) {
         return databaseDao.addPattern(patternBulletin)
     }
 
+    suspend fun addMatchedRule(matchedRule: MatchedRule): Long {
+        return databaseDao.addMatchedRule(matchedRule)
+    }
+
     fun getRulesWithLists(): List<RuleWithLists> {
         return databaseDao.getRules()
     }
 
     fun getRulesNotHiking(): List<RuleWithLists> {
         return databaseDao.getRulesNotHiking()
+    }
+
+    fun getRulesHiking(): List<RuleWithLists> {
+        return databaseDao.getRulesHiking()
+    }
+
+    fun getPatternsForDate(av_bulletin_id: Long, start: Date, end: Date, pattern_id: Int, av_area_id: Int): List<PatternBulletin> {
+        return databaseDao.getPatternsForDate(av_bulletin_id, start, end, pattern_id, av_area_id)
+    }
+
+    fun getDangersForDate(av_bulletin_id: Long, start: Date, end: Date, av_area_id: Int, elevation: Double, value: Int): List<DangerBulletin> {
+        return databaseDao.getDangersForDate(av_bulletin_id, start, end, av_area_id, elevation, value)
+    }
+
+    fun getProblemsForDate(av_bulletin_id: Long, start: Date, end: Date, av_area_id: Int, problem: Int, elevation: Double): List<ProblemBulletin> {
+        return databaseDao.getProblemsForDate(av_bulletin_id, start, end, av_area_id, problem, elevation)
+    }
+
+    fun getLatestBulletin(): AvalancheBulletin {
+        return databaseDao.getLatestBulletin()
+    }
+
+    fun getRuleByIdNewerThan(rule_id: Long, date: Date): List<MatchedRule> {
+        return databaseDao.getRuleByIdNewerThan(rule_id, date)
     }
 
 }

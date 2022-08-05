@@ -58,6 +58,9 @@ interface DatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPattern(patternBulletin: PatternBulletin): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addMatchedRule(matchedRule: MatchedRule): Long
+
 
     @Transaction
     @Query("SELECT * FROM rule_table")
@@ -70,6 +73,27 @@ interface DatabaseDao {
     @Transaction
     @Query("SELECT * FROM rule_table WHERE user_hiking")
     fun getRulesHiking(): List<RuleWithLists>
+
+    @Transaction
+    @Query("SELECT * FROM pattern_bulletin_table WHERE :av_bulletin_id=av_bulletin_id AND :start >= valid_start AND :end <= valid_end AND :av_area_id = av_area_id AND :pattern_id = pattern AND :av_area_id = av_area_id")
+    fun getPatternsForDate(av_bulletin_id: Long, start: Date, end: Date, pattern_id: Int, av_area_id: Int): List<PatternBulletin>
+
+    @Transaction
+    @Query("SELECT * FROM avalanche_bulletin_table ORDER BY av_bulletin_id DESC LIMIT 1")
+    fun getLatestBulletin(): AvalancheBulletin
+
+    @Transaction
+    @Query("SELECT * FROM danger_bulletin_table WHERE :av_bulletin_id=av_bulletin_id AND :start >= valid_start AND :end <= valid_end AND :av_area_id = av_area_id AND :value = value AND :elevation BETWEEN elevation_from AND elevation_to")
+    fun getDangersForDate(av_bulletin_id: Long, start: Date, end: Date, av_area_id: Int, elevation: Double, value: Int): List<DangerBulletin>
+
+    @Transaction
+    @Query("SELECT * FROM problem_bulletin_table WHERE :av_bulletin_id=av_bulletin_id AND :start >= valid_start AND :end <= valid_end AND :av_area_id = av_area_id AND :problem = problem AND :elevation BETWEEN elevation_from AND elevation_to")
+    fun getProblemsForDate(av_bulletin_id: Long, start: Date, end: Date, av_area_id: Int, problem: Int, elevation: Double): List<ProblemBulletin>
+
+    @Transaction
+    @Query("SELECT * FROM matched_rule_table WHERE :rule_id=rule_id AND date >= :date ")
+    fun getRuleByIdNewerThan(rule_id: Long, date: Date): List<MatchedRule>
+
 }
 
 
