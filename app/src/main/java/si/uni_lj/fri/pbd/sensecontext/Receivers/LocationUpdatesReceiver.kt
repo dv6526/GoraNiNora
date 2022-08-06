@@ -383,7 +383,8 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     }
                 }
 
-                temp = temp/whs.size
+                if (whs.size > 0)
+                    temp = temp/whs.size
                 if (wd.temp_avg_min != null && temp < wd.temp_avg_min)
                     rule_is_match = false
                 if (wd.temp_avg_max != null && temp > wd.temp_avg_max)
@@ -479,7 +480,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     // danes še nisi izdal opozorila za rule_id
                     if (matched_rules.size == 0) {
                         repository.addMatchedRule(
-                            MatchedRule(0L, rule.rule.rule_id, Calendar.getInstance().time, false)
+                            MatchedRule(0L, rule.rule.rule_id, Calendar.getInstance().time, false, rule.rule.notification_name, rule.rule.notification_text, true)
                         )
                     }
                 }

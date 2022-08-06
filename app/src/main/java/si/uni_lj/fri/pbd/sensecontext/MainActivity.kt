@@ -24,14 +24,15 @@ import si.uni_lj.fri.pbd.sensecontext.data.rules.PatternRule
 import si.uni_lj.fri.pbd.sensecontext.data.rules.ProblemRule
 import si.uni_lj.fri.pbd.sensecontext.data.rules.Rule
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
-import si.uni_lj.fri.pbd.sensecontext.fragments.HomeFragment
-import si.uni_lj.fri.pbd.sensecontext.fragments.SensorsFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.HistoryFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
+class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     companion object {
         const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
@@ -50,21 +51,24 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
         createNotificationChannels()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
-        replaceFragment(HomeFragment())
+        replaceFragment(HistoryFragment())
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.page_1 -> {
-                    replaceFragment(HomeFragment())
+                    replaceFragment(HistoryFragment())
 
 
                     //sendJobAPI()
                     true
                 }
                 R.id.page_2 -> {
-                    replaceFragment((SensorsFragment()))
+                    replaceFragment((WarningsFragment()))
 
+                    true
+                }
+                R.id.page_3 -> {
+                    replaceFragment((SettingsFragment()))
                     true
                 }
                 else -> false
@@ -190,7 +194,7 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
             val rules = Gson().fromJson(jsonString, Rules::class.java)
 
             for (rule in rules.rules) {
-                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_name))
+                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_text))
                 for (wd in rule.weather_descriptions) {
                     repository.addWeatherDescription(WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
                         wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation
@@ -209,17 +213,17 @@ class MainActivity : AppCompatActivity(), SensorsFragment.FragmentCallback {
                 }
             }
 
-            testRules()
+            //testRules()
 
             //val rule1 = dao.add_rule(Rule(0L, "S", 30.0, 45.0, null, null, true))
             //val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, 0, 10.0, 15.0, 8, 12,null, null, null, "1000"))
             //dao.add_rule_weather_description_ref(RuleWeatherDescriptionRef(rule1, weather_desc1))
-            /*
+
             with(pref.edit()) {
-                putBoolean("rules_populated", true
+                putBoolean("rules_populated", true)
                 apply()
             }
-             */
+
         }
 
     }

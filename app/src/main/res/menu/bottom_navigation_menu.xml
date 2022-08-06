@@ -3,11 +3,16 @@
     <item
         android:id="@+id/page_1"
         android:enabled="true"
-        android:title="Test 1"
+        android:title="Zgodovina"
         android:icon="@drawable/ic_baseline_ac_unit_24"/>
     <item
         android:id="@+id/page_2"
         android:enabled="true"
-        android:title="Test 2"
+        android:title="Opozorila"
+        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+    <item
+        android:id="@+id/page_3"
+        android:enabled="true"
+        android:title="Nastavitve"
         android:icon="@drawable/ic_baseline_ac_unit_24"/>
 </menu>

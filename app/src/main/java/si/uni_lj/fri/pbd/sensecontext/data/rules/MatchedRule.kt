@@ -10,5 +10,8 @@ data class MatchedRule (
     var matched_rule_id: Long,
     var rule_id: Long,
     var date: Date,
-    var read: Boolean
+    var read: Boolean,
+    var name: String,
+    var text: String,
+    var hiking: Boolean
 )

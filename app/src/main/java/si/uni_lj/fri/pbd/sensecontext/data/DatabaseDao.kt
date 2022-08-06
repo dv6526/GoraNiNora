@@ -1,5 +1,6 @@
 package si.uni_lj.fri.pbd.sensecontext.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
@@ -93,6 +94,10 @@ interface DatabaseDao {
     @Transaction
     @Query("SELECT * FROM matched_rule_table WHERE :rule_id=rule_id AND date >= :date ")
     fun getRuleByIdNewerThan(rule_id: Long, date: Date): List<MatchedRule>
+
+    @Transaction
+    @Query("SELECT * FROM matched_rule_table WHERE date >= :date ")
+    fun getMatchedRulesToday(date: Date): LiveData<List<MatchedRule>>
 
 }
 

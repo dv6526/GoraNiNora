@@ -9,19 +9,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import si.uni_lj.fri.pbd.sensecontext.MainActivity
+import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
+import si.uni_lj.fri.pbd.sensecontext.RecyclerViewAdapter
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
-import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentSensorsBinding
-import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentSensorsBinding.inflate
+import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsBinding.inflate
+import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsBinding
+import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
 
 
-class SensorsFragment : Fragment() {
+class WarningsFragment : Fragment() {
 
-    private var _binding: FragmentSensorsBinding? = null
+    private var _binding: FragmentWarningsBinding? = null
     private val binding get() = _binding!!
+    private var mViewModel: MainViewModel? = null
+    private var adapter: RecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +64,28 @@ class SensorsFragment : Fragment() {
             }
         }
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        mViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        observerSetup()
+        recyclerSetup()
+    }
+
+    private fun observerSetup() {
+        mViewModel?.matchedRules?.observe(viewLifecycleOwner) { matchedRules ->
+            print(matchedRules)
+            adapter?.setItemList(matchedRules)
+        }
+    }
+
+    private fun recyclerSetup() {
+        adapter = RecyclerViewAdapter(R.layout.layout_grid_item)
+        val recyclerView: RecyclerView = binding.warningsRecycler
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = adapter
+    }
+
 
     var activityCallback: FragmentCallback? = null
 
