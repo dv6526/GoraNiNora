@@ -9,17 +9,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import si.uni_lj.fri.pbd.sensecontext.MainActivity
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.RecyclerViewAdapter
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
+import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsBinding.inflate
 import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsBinding
 import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
@@ -31,6 +30,7 @@ class WarningsFragment : Fragment() {
     private val binding get() = _binding!!
     private var mViewModel: MainViewModel? = null
     private var adapter: RecyclerViewAdapter? = null
+    lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,22 +47,7 @@ class WarningsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val switch = binding.switch1
-        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
-        switch.setChecked(sharedPreferences.getBoolean("override", false))
 
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            val editor: SharedPreferences.Editor = requireActivity().getSharedPreferences("pref", MODE_PRIVATE).edit()
-            if (isChecked) {
-                editor.putBoolean("override", true)
-                editor.apply()
-                startLocationUpdates()
-            } else {
-                editor.putBoolean("override", false)
-                editor.apply()
-                stopLocationUpdates()
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,7 +65,7 @@ class WarningsFragment : Fragment() {
     }
 
     private fun recyclerSetup() {
-        adapter = RecyclerViewAdapter(R.layout.layout_grid_item)
+        adapter = mViewModel?.let { RecyclerViewAdapter(it, this) }
         val recyclerView: RecyclerView = binding.warningsRecycler
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
@@ -101,6 +86,9 @@ class WarningsFragment : Fragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(context.toString() + " must implement ToolbarListener")
         }
+        val db = ApplicationDatabase.getDatabase(context)
+        val dao = db.dao()
+        repository = Repository(dao)
     }
 
 
@@ -108,6 +96,7 @@ class WarningsFragment : Fragment() {
     fun startLocationUpdates() {
         activityCallback?.stopActivityTransitionUpdates()
         LocationUpdatesService.user_is_hiking = true
+        repository.user_hiking.postValue(true)
         if (!LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.putExtra("locationUpdatesInterval",
@@ -127,6 +116,7 @@ class WarningsFragment : Fragment() {
     fun stopLocationUpdates() {
         activityCallback?.startActivityTransitionUpdates()
         LocationUpdatesService.user_is_hiking = false
+        repository.user_hiking.postValue(false)
         if (LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.action = LocationUpdatesService.ACTION_STOP

@@ -10,6 +10,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -28,6 +30,7 @@ import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
+import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -248,6 +251,8 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             val acumulativeHeight = calcAccHeight(loc)
             if (acumulativeHeight > 0) {
                 LocationUpdatesService.user_is_hiking = true
+                repository.user_hiking.postValue(true)
+
                 showNotification("Detected HIKING in MOUNTAINS!","Application detected that you might be HIKING.", context)
             }
             Log.d(TAG, acumulativeHeight.toString())

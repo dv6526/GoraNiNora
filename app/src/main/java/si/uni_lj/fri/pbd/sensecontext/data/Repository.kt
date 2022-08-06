@@ -1,6 +1,7 @@
 package si.uni_lj.fri.pbd.sensecontext.data
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.PatternBulletin
@@ -12,6 +13,8 @@ import java.util.*
 class Repository(private val databaseDao: DatabaseDao) {
     val readAllDataWeather: List<WeatherHour> = databaseDao.readAllDataWeather()
     fun matchedRulesToday(date: Date): LiveData<List<MatchedRule>> = databaseDao.getMatchedRulesToday(date)
+    val user_hiking: MutableLiveData<Boolean> = MutableLiveData()
+
     suspend fun addWeatherHour(weatherHour: WeatherHour) {
         databaseDao.add_weather_hour(weatherHour)
     }

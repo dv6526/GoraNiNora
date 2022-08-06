@@ -10,12 +10,15 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesReceiver
+import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import java.util.concurrent.TimeUnit
 
 class LocationUpdatesService : Service() {
@@ -33,6 +36,8 @@ class LocationUpdatesService : Service() {
     }
 
     lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var repository: Repository
+
 
 
     override fun onBind(intent: Intent): IBinder? {
@@ -51,6 +56,9 @@ class LocationUpdatesService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        val db = ApplicationDatabase.getDatabase(applicationContext)
+        val dao = db.dao()
+        repository = Repository(dao)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
         startLocationUpdates(this)
@@ -63,6 +71,7 @@ class LocationUpdatesService : Service() {
         Toast.makeText(this, "Stopped Location GPS Updates", Toast.LENGTH_LONG).show()
         removeLocationUpdates(this)
         user_is_hiking = false
+        repository.user_hiking.postValue(false)
         IS_RUNNING = false
     }
 
