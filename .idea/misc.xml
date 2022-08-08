@@ -3,17 +3,30 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/corner_radius.xml" value="0.1" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_back.xml" value="0.5305" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_baseline_ac_unit_24.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_baseline_hiking.xml" value="0.4055" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_bell_solid.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_trenutno_opozorilo.xml" value="0.1" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/font/fonts.xml" value="0.565625" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_details.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/content_details.xml" value="0.3161231884057971" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/dropdown_item.xml" value="0.4750905797101449" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_first.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_home.xml" value="0.2608915906788247" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_nastavitve.xml" value="0.42617753623188404" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_second.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_sensors.xml" value="0.4216485507246377" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_warnings.xml" value="0.483695652173913" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_dropdown.xml" value="0.3161231884057971" />
-        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_grid_item.xml" value="0.1" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_grid_item.xml" value="0.33" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_hiking_warning.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_legend.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_switch.xml" value="0.3161231884057971" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/my_selected_item.xml" value="0.3125" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/selected_item.xml" value="0.3125" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.5364583333333334" />
       </map>
     </option>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="15sp"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,8 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:cardCornerRadius="10sp"
-        app:cardElevation="2dp">
+        android:id="@+id/card"
+        android:layout_marginHorizontal="10sp"
+        android:layout_marginVertical="5sp"
+        android:background="@drawable/corner_radius"
+        android:translationZ="8dp"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,14 +22,29 @@
             android:orientation="vertical"
             android:padding="15sp">
 
-            <TextView
-                android:id="@+id/main_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10sp"
-                android:text="Content1"
-                android:textColor="#000"
-                android:textSize="30sp"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/main_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/redhattext_bold"
+                    android:text="NAPIHAN SNEG"
+                    android:textColor="@color/blue"
+                    android:layout_weight="1"
+                    android:textSize="28sp"/>
+
+                <ImageView
+                    android:id="@+id/read"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_prebrano"/>
+
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -49,9 +68,9 @@
                     android:inputType="textMultiLine"
                     android:lines="2"
                     android:singleLine="false"
-
-                    android:text="moje ime je je domen vilar kako je pa tebi ime "
-                    android:textColor="#000"
+                    android:fontFamily="@font/redhattext_semibold"
+                    android:text="Text"
+                    android:textColor="@color/black"
                     android:textIsSelectable="false"
                     android:textSize="20sp" />
 
@@ -70,8 +89,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10sp"
-                    android:text="Content2"
-                    android:textColor="#000"
+                    android:fontFamily="@font/redhattext"
+                    android:text="Pred 10 min"
+                    android:textColor="@color/gray2"
                     android:textSize="15sp" />
                 <View
                     android:layout_width="0dp"
@@ -84,7 +104,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10sp"
                     android:text="PREBERI VEČ"
-                    android:textColor="#000"
+                    android:fontFamily="@font/redhattext_semibold"
+                    android:textColor="@color/blue"
                     android:textSize="15sp"/>
             </LinearLayout>
 

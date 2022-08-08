@@ -62,10 +62,14 @@ class WarningsFragment : Fragment() {
             print(matchedRules)
             adapter?.setItemList(matchedRules)
         }
+
+        mViewModel?.user_hiking?.observe(viewLifecycleOwner) { userHiking ->
+            adapter?.notifyDataSetChanged()
+        }
     }
 
     private fun recyclerSetup() {
-        adapter = mViewModel?.let { RecyclerViewAdapter(it, this) }
+        adapter = mViewModel?.let { RecyclerViewAdapter(it, this, requireContext()) }
         val recyclerView: RecyclerView = binding.warningsRecycler
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
@@ -96,7 +100,7 @@ class WarningsFragment : Fragment() {
     fun startLocationUpdates() {
         activityCallback?.stopActivityTransitionUpdates()
         LocationUpdatesService.user_is_hiking = true
-        repository.user_hiking.postValue(true)
+        repository.user_hiking.value = true
         if (!LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.putExtra("locationUpdatesInterval",
@@ -116,7 +120,7 @@ class WarningsFragment : Fragment() {
     fun stopLocationUpdates() {
         activityCallback?.startActivityTransitionUpdates()
         LocationUpdatesService.user_is_hiking = false
-        repository.user_hiking.postValue(false)
+        repository.user_hiking.value = false
         if (LocationUpdatesService.IS_RUNNING) {
             val i = Intent(context, LocationUpdatesService::class.java)
             i.action = LocationUpdatesService.ACTION_STOP

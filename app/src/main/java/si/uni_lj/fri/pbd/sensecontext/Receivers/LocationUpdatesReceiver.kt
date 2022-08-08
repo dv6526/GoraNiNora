@@ -249,7 +249,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         processingScope.launch  {
             val loc: List<Location> = repository.fetchLocationsBetweenDate(backTime, Calendar.getInstance().time)
             val acumulativeHeight = calcAccHeight(loc)
-            if (acumulativeHeight > 0) {
+            if (acumulativeHeight >= 0) {
                 LocationUpdatesService.user_is_hiking = true
                 repository.user_hiking.postValue(true)
 

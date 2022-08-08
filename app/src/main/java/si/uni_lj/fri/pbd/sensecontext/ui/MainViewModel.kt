@@ -13,20 +13,22 @@ import java.util.*
 
 class MainViewModel(application: Application?): AndroidViewModel(application!!) {
     var matchedRules: LiveData<List<MatchedRule>>
-    var user_hiking: MutableLiveData<Boolean>? = MutableLiveData()
+    var ruleDetails: MutableLiveData<MatchedRule> = MutableLiveData()
+    var user_hiking: MutableLiveData<Boolean>? = null
     private val repository: Repository
     init {
         val db = ApplicationDatabase.getDatabase(application!!.applicationContext)
         val dao = db.dao()
         repository = Repository(dao)
-        user_hiking = repository.user_hiking
         val cal1 = Calendar.getInstance()
         cal1.set(Calendar.HOUR_OF_DAY, 0)
         cal1.set(Calendar.MINUTE, 0)
         cal1.set(Calendar.SECOND, 0)
         cal1.set(Calendar.MILLISECOND, 0)
         matchedRules = repository.matchedRulesToday(cal1.time)
-        user_hiking?.value = LocationUpdatesService.user_is_hiking
+        user_hiking = repository.user_hiking
+        repository.user_hiking.setValue(LocationUpdatesService.user_is_hiking)
+        //user_hiking?.value = LocationUpdatesService.user_is_hiking
     }
 
 

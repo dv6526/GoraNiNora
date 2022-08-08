@@ -17,6 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
+        <activity
+            android:name=".ui.DetailsActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".Receivers.LocationUpdatesReceiver"
