@@ -8,7 +8,7 @@ data class ProblemRule(
     @PrimaryKey(autoGenerate = true)
     var prob_id: Long,
     val rule_id: Long,
-    var av_area_id: Int,
+    var av_area_id: Int?,
     var check_elevation: Boolean,
     var day_delay: Int,
     var hour_max: Int,

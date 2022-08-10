@@ -22,7 +22,7 @@ class WeatherWorker (ctx: Context, params: WorkerParameters): CoroutineWorker(ct
     override suspend fun doWork(): Result {
         val client = OkHttpClient()
         val getRequest: Request = Request.Builder()
-            .url("https://meteo.arso.gov.si/uploads/probase/www/fproduct/text/sl/forecast_SI_JULIAN-ALPS_latest.xml")
+            .url("https://meteo.arso.gov.si/uploads/probase/www/fproduct/text/sl/forecast_si-upperAir-new_latest.xml")
             .build()
 
         try {

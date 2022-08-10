@@ -2,7 +2,6 @@ package si.uni_lj.fri.pbd.sensecontext.data.rules
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import si.uni_lj.fri.pbd.sensecontext.data.WeatherDescription
 
 data class RuleWithLists (
     @Embedded val rule: Rule,

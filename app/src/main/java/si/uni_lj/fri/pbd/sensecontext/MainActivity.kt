@@ -19,10 +19,7 @@ import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
 import si.uni_lj.fri.pbd.sensecontext.Weather.AvalancheBulletinWorker
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.*
-import si.uni_lj.fri.pbd.sensecontext.data.rules.DangerRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.PatternRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.ProblemRule
-import si.uni_lj.fri.pbd.sensecontext.data.rules.Rule
+import si.uni_lj.fri.pbd.sensecontext.data.rules.*
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.HistoryFragment
@@ -196,20 +193,22 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             for (rule in rules.rules) {
                 val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_text))
                 for (wd in rule.weather_descriptions) {
-                    repository.addWeatherDescription(WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                    repository.addWeatherDescription(
+                        WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
                         wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation
-                    ))
+                    )
+                    )
                 }
                 for (pattern in rule.patterns) {
-                    repository.addPatternRule(PatternRule(0L, rule1, pattern!!.av_area_id, pattern.day_delay, pattern.hour_max, pattern.hour_min, pattern.pattern_id))
+                    repository.addPatternRule(PatternRule(0L, rule1, pattern?.av_area_id, pattern!!.day_delay, pattern.hour_max, pattern.hour_min, pattern.pattern_id))
                 }
 
                 for (problem in rule.problems) {
-                    repository.addProblemRule(ProblemRule(0L, rule1, problem!!.av_area_id, problem.check_elevation, problem.day_delay, problem.hour_max, problem.hour_min, problem.problem_id))
+                    repository.addProblemRule(ProblemRule(0L, rule1, problem?.av_area_id, problem!!.check_elevation, problem.day_delay, problem.hour_max, problem.hour_min, problem.problem_id))
                 }
 
                 for (danger in rule.dangers) {
-                    repository.addDangerRule(DangerRule(0L, rule1, danger!!.av_area_id, danger.check_elevation, danger.day_delay, danger.hour_max, danger.hour_min, danger.value))
+                    repository.addDangerRule(DangerRule(0L, rule1, danger?.av_area_id, danger!!.check_elevation, danger.day_delay, danger.am, danger.value))
                 }
             }
 

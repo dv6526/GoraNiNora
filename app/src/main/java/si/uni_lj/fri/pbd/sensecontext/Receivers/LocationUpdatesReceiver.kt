@@ -10,8 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -24,13 +22,13 @@ import okhttp3.*
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Areas.Areas
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
+import si.uni_lj.fri.pbd.sensecontext.MatchRules
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
-import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -221,7 +219,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     if (!LocationUpdatesService.user_is_hiking)
                         detectUserIsHiking(context)
                     else {
-                        showRules(context)
+                        MatchRules.matchRules(context, true)
                     }
 
                 }
@@ -282,7 +280,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun showRules(context: Context) {
+    private fun matchRules(context: Context) {
         val db = ApplicationDatabase.getDatabase(context)
         val dao = db.dao()
         val repository = Repository(dao)
@@ -376,8 +374,14 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     if (wd.vremenski_pojav != null && !vremenski_pojav_occured && !wd.vremenski_pojav.equals(wh.vremenski_pojav)) {
                         rule_is_match = false
                     } else if (wd.vremenski_pojav != null && wd.vremenski_pojav.equals(wh.vremenski_pojav)) {
-                        rule_is_match = true
-                        vremenski_pojav_occured = true
+                        if (wd.intenzivnost != null && wd.intenzivnost.equals(wh.intenzivnost)) {
+                            rule_is_match = true
+                            vremenski_pojav_occured = true
+                        } else if (wd.intenzivnost == null) {
+                            rule_is_match = true
+                            vremenski_pojav_occured = true
+                        }
+
                     }
 
                     if (wd.oblacnost != null && !oblacnost_occured && !wd.oblacnost.equals(wh.oblacnost)) {
@@ -430,15 +434,22 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             //preveri, če se ujemajo vsi dangerji
             val dangers = rule.dangerRules
             for (danger in dangers) {
+                var hour_min = 0
+                var hour_max = 12
+                if (!danger.am) {
+                    hour_min = 12
+                    hour_max = 24
+                }
+
                 val cal1 = Calendar.getInstance()
                 cal1.add(Calendar.DATE, danger.day_delay)
-                cal1.set(Calendar.HOUR_OF_DAY, danger.hour_min)
+                cal1.set(Calendar.HOUR_OF_DAY, hour_min)
                 cal1.set(Calendar.MINUTE, 0)
                 cal1.set(Calendar.SECOND, 0)
                 cal1.set(Calendar.MILLISECOND, 0)
                 val cal2 = Calendar.getInstance()
                 cal2.add(Calendar.DATE, danger.day_delay)
-                cal2.set(Calendar.HOUR_OF_DAY, danger.hour_max)
+                cal2.set(Calendar.HOUR_OF_DAY, hour_max)
                 cal2.set(Calendar.MINUTE, 0)
                 cal2.set(Calendar.SECOND, 0)
                 cal2.set(Calendar.MILLISECOND, 0)

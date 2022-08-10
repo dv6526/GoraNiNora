@@ -1,4 +1,4 @@
-package si.uni_lj.fri.pbd.sensecontext.data;
+package si.uni_lj.fri.pbd.sensecontext.data.rules;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey

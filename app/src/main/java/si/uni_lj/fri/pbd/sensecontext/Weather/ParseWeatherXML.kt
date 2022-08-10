@@ -23,17 +23,20 @@ class ParseWeatherXML {
     private lateinit var oblacnost: String
     private var vremenski_pojav: String? = null
     private var intenzivnost: String? = null
+    private var t_500: Int = 0
     private var t_1000: Int = 0
     private var t_1500: Int = 0
     private var t_2000: Int = 0
     private var t_2500: Int = 0
     private var t_3000: Int = 0
     private var meja_snezenja: Int = 0
+    private var w_500: Int = 0
     private var w_1000: Int = 0
     private var w_1500: Int = 0
     private var w_2000: Int = 0
     private var w_2500: Int = 0
     private var w_3000: Int = 0
+    private var obmocje: String? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -56,8 +59,12 @@ class ParseWeatherXML {
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG -> {
                         if (tagname.equals("metData")) {
-                            weatherHour = si.uni_lj.fri.pbd.sensecontext.data.WeatherHour(0, date!!, oblacnost, vremenski_pojav, intenzivnost, t_1000, t_1500, t_2000, t_2500, t_3000, meja_snezenja, w_1000, w_1500, w_2000, w_2500, w_3000)
-                            weatherHour?.let { weather.add(it) }
+                            if (obmocje != null) {
+                                weatherHour = si.uni_lj.fri.pbd.sensecontext.data.WeatherHour(0, date!!, oblacnost, vremenski_pojav, intenzivnost,t_500, t_1000, t_1500, t_2000, t_2500, t_3000, meja_snezenja,w_500, w_1000, w_1500, w_2000, w_2500, w_3000,
+                                    obmocje!!
+                                )
+                                weatherHour?.let { weather.add(it) }
+                            }
                         } else if (tagname.equals("valid")) {
                             val formatter = SimpleDateFormat("dd.MM.yyyy H:mm")
                             date = formatter.parse(text!!.replace(" CEST", ""))
@@ -77,6 +84,8 @@ class ParseWeatherXML {
                             t_1500 = text!!.toInt()
                         } else if (tagname.equals("t_level_1000_m")) {
                             t_1000 = text!!.toInt()
+                        } else if (tagname.equals("t_level_500_m")) {
+                            t_500 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_3000_m")) {
                             w_3000 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_2500_m")) {
@@ -87,8 +96,18 @@ class ParseWeatherXML {
                             w_1500 = text!!.toInt()
                         } else if (tagname.equals("ffVal_level_1000_m")) {
                             w_1000 = text!!.toInt()
+                        } else if (tagname.equals("ffVal_level_500_m")) {
+                            w_500 = text!!.toInt()
                         } else if (tagname.equals("sl_alt")) {
                             meja_snezenja = text!!.toInt()
+                        } else if (tagname.equals("domain_meteosiId")) {
+                            when (text) {
+                                "SI_KAMNIK-SAVINJA-ALPS_" -> obmocje = text
+                                "SI_KARAVANKE-ALPS_" -> obmocje = text
+                                "SI_JULIAN-ALPS_SOUTH-WEST_" -> obmocje = text
+                                "SI_JULIAN-ALPS_" -> obmocje = text
+                                else -> obmocje = null
+                            }
                         }
                         text = null
                     }

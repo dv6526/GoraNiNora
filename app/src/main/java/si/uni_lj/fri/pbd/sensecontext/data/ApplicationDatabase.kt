@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Bulletin.Danger
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.AvalancheBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.DangerBulletin
 import si.uni_lj.fri.pbd.sensecontext.data.bulletin.PatternBulletin
