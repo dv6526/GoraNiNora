@@ -1,25 +1,28 @@
 package si.uni_lj.fri.pbd.sensecontext.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import si.uni_lj.fri.pbd.sensecontext.R
+import androidx.fragment.app.Fragment
+import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsDetailsBinding
+import si.uni_lj.fri.pbd.sensecontext.ui.HikingWarningsActivity
 
 
 class WarningsDetailsFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var rule_id: Long = 0
+    private var position: Int = 0
     private lateinit var binding: FragmentWarningsDetailsBinding
+    private lateinit var rule: MatchedRule
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            rule_id = it.getLong("rule_id")
+            position = it.getInt("position")
         }
-        // pridobi rule in ga prikazi
+
+        setupData(position)
     }
 
     override fun onCreateView(
@@ -28,8 +31,7 @@ class WarningsDetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentWarningsDetailsBinding.inflate(layoutInflater)
-        // pridobi rule in ga prikazi
-
+        binding.textDesc.text = rule.text
         return binding.root
     }
 
@@ -38,7 +40,12 @@ class WarningsDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    fun setupData() {
-        //nastavi naslov in opis nevarnosti
+
+
+    fun setupData(position: Int) {
+
+        val activity: HikingWarningsActivity? = activity as HikingWarningsActivity?
+        rule = activity!!.getRule(position)
+
     }
 }

@@ -1,6 +1,9 @@
 package si.uni_lj.fri.pbd.sensecontext
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.launch
@@ -9,6 +12,7 @@ import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.data.rules.RuleWithLists
+import si.uni_lj.fri.pbd.sensecontext.ui.HikingWarningsActivity
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -286,8 +290,20 @@ class MatchRules {
         //poslji notification
         //ko odpre notificaiton se odpre stran s pravili
         private fun showNotification(warningTitle:String, warningText: String, context: Context) {
+
+            // Create an Intent for the activity you want to start
+            val resultIntent = Intent(context, HikingWarningsActivity::class.java)
+            // Create the TaskStackBuilder
+            val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                // Add the intent, which inflates the back stack
+                addNextIntentWithParentStack(resultIntent)
+                // Get the PendingIntent containing the entire back stack
+                getPendingIntent(0,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            }
+
             val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID_NOTIFY).setSmallIcon(
-                R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText)
+                R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText).setContentIntent(resultPendingIntent)
             with(NotificationManagerCompat.from(context)) {
                 notify(13, builder.build())
             }
