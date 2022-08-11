@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">SenseContext</string>
-    <string name="channel_name">detected transition</string>
-    <string name="channel_description">User is notified of detected transition</string>
-    <string name="channel_name_warning">detected situation in mountains</string>
-    <string name="channel_description_warning">User is notified of detected situation</string>
+    <string name="channel_name">Zaznana sprememba aktivnosti.</string>
+    <string name="channel_description">Uporabnik je obveščen o spremembi telesne aktivnosti.</string>
+    <string name="channel_name_warning">Zaznana hoja v gorah.</string>
+    <string name="channel_description_warning">Uporabnik je obveščen o zaznani hoji v gorah.</string>
+    <string name="channel_name_notification">Trenutna opozorila.</string>
+    <string name="channel_description_notification">Zaznana trenutna opozorila.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

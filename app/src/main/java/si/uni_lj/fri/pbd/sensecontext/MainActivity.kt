@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
         const val CHANNEL_ID_WARNING = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_WARNING"
+        const val CHANNEL_ID_NOTIFY = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_NOTIFY"
+
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -47,7 +49,8 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        createNotificationChannels()
+        createNotificationChannel1()
+        createNotificationChannel2()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -159,7 +162,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         super.onResume()
     }
 
-    fun createNotificationChannels() {
+    fun createNotificationChannel1() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -173,7 +176,23 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             val notificationManager: NotificationManager =
                 applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+        }
+    }
 
+    fun createNotificationChannel2() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = applicationContext.resources.getString(R.string.channel_name_notification)
+            val descriptionText = applicationContext.resources.getString(R.string.channel_description_notification)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID_NOTIFY, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 

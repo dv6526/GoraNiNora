@@ -97,7 +97,15 @@ interface DatabaseDao {
 
     @Transaction
     @Query("SELECT * FROM matched_rule_table WHERE date >= :date ")
-    fun getMatchedRulesToday(date: Date): LiveData<List<MatchedRule>>
+    fun getMatchedRulesByDate(date: Date): LiveData<List<MatchedRule>>
+
+    @Transaction
+    @Query("SELECT * FROM matched_rule_table WHERE date >= :date AND :hiking=hiking")
+    fun getMatchedRulesByDate(date: Date, hiking: Boolean): List<MatchedRule>
+
+    @Transaction
+    @Query("SELECT * FROM matched_rule_table WHERE date >= :date AND :rule_id=rule_id")
+    fun getMatchedRuleByIdDate(date: Date, rule_id: Long): MatchedRule
 
 }
 

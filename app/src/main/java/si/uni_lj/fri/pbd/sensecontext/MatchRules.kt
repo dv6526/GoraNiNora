@@ -1,12 +1,15 @@
 package si.uni_lj.fri.pbd.sensecontext
 
 import android.content.Context
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.data.rules.RuleWithLists
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -232,37 +235,46 @@ class MatchRules {
                     }
                 }
 
-                if(rule_is_match) {
+                // če za opozorilo danes še nismo poslali notificationa
+                val cal1 = Calendar.getInstance()
+                cal1.set(Calendar.HOUR_OF_DAY, 0)
+                cal1.set(Calendar.MINUTE, 0)
+                cal1.set(Calendar.SECOND, 0)
+                cal1.set(Calendar.MILLISECOND, 0)
+                val matchedRule = repository.getMatchedRuleByIdDate(cal1.time, rule.rule.rule_id)
 
+                if(rule_is_match && matchedRule == null) {
                     ids.add(rule.rule.rule_id)
                     rules_names.add(rule.rule.notification_name)
                     rules_texts.add(rule.rule.notification_text)
-
-                    //showNotification(rule.rule.notification_name, rule.rule.notification_text, context)
                 }
             }
 
             processingScope.launch {
+
                 ids.forEachIndexed { index, id ->
-                    // rule shrani, če danes še ni bilo ujemanja
-                    val cal1 = Calendar.getInstance()
-                    cal1.set(Calendar.HOUR_OF_DAY, 0)
-                    cal1.set(Calendar.MINUTE, 0)
-                    cal1.set(Calendar.SECOND, 0)
-                    cal1.set(Calendar.MILLISECOND, 0)
-                    val matched_rules = repository.getRuleByIdNewerThan(id, cal1.time)
-                    // danes še nisi izdal opozorila za rule_id
-                    if (matched_rules.size == 0) {
-                        repository.addMatchedRule(
-                            MatchedRule(0L, id, Calendar.getInstance().time, false, rules_names[index], rules_texts[index], true)
-                        )
-                    }
+                    repository.addMatchedRule(
+                        MatchedRule(0L, id, Calendar.getInstance().time, false, rules_names[index], rules_texts[index], user_hiking)
+                    )
                 }
-
-                if (ids.size != 0 && user_hiking) {
-                    //pošlji notification za matchana pravila
+                val desc = StringBuilder()
+                rules_names.forEachIndexed { idx, rule ->
+                    if (idx == rules_names.size - 1)
+                        desc.append(rule)
+                    else
+                        desc.append(rule + ", ")
                 }
-
+                var title:String? = null
+                when (rules_names.size) {
+                    1 -> title = "Zaznano 1 opozorilo!"
+                    2 -> title = "Zaznana 2 opozorila"
+                    3 -> title = "Zaznana 3 opozorila"
+                    3 -> title = "Zaznana 4 opozorila"
+                    else -> "Zaznanih " + rules_names.size + " opozoril!"
+                }
+                if (title != null) {
+                    showNotification(title, desc.toString(), context)
+                }
 
 
             }
@@ -273,5 +285,14 @@ class MatchRules {
         //poglej, če se je pojavilo kaksno novo pravilo
         //poslji notification
         //ko odpre notificaiton se odpre stran s pravili
+        private fun showNotification(warningTitle:String, warningText: String, context: Context) {
+            val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID_NOTIFY).setSmallIcon(
+                R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText)
+            with(NotificationManagerCompat.from(context)) {
+                notify(13, builder.build())
+            }
+        }
     }
+
+
 }

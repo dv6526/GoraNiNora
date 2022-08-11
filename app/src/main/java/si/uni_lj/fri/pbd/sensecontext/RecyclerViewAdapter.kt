@@ -6,10 +6,7 @@ import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -137,6 +134,7 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
         var image: ImageView = itemView.findViewById(R.id.icon)
         var desc: TextView = itemView.findViewById(R.id.desc_text)
         var card: CardView = itemView.findViewById(R.id.card)
+        var linear_layour: LinearLayout = itemView.findViewById(R.id.layout_card)
         var date_text: TextView = itemView.findViewById(R.id.date_text)
     }
 

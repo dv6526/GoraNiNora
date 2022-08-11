@@ -12,7 +12,7 @@ import java.util.*
 
 class Repository(private val databaseDao: DatabaseDao) {
     val readAllDataWeather: List<WeatherHour> = databaseDao.readAllDataWeather()
-    fun matchedRulesToday(date: Date): LiveData<List<MatchedRule>> = databaseDao.getMatchedRulesToday(date)
+    fun matchedRulesToday(date: Date): LiveData<List<MatchedRule>> = databaseDao.getMatchedRulesByDate(date)
     val user_hiking: MutableLiveData<Boolean> = MutableLiveData()
 
     suspend fun addWeatherHour(weatherHour: WeatherHour) {
@@ -98,5 +98,15 @@ class Repository(private val databaseDao: DatabaseDao) {
     fun getRuleByIdNewerThan(rule_id: Long, date: Date): List<MatchedRule> {
         return databaseDao.getRuleByIdNewerThan(rule_id, date)
     }
+
+    fun getMatchedRulesByDate(date: Date, hiking: Boolean): List<MatchedRule> {
+        return databaseDao.getMatchedRulesByDate(date, hiking)
+    }
+
+    fun getMatchedRuleByIdDate(date: Date, rule_id: Long): MatchedRule {
+        return databaseDao.getMatchedRuleByIdDate(date, rule_id)
+    }
+
+
 
 }
