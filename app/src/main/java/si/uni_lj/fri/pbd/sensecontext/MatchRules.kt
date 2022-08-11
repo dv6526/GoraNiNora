@@ -259,7 +259,7 @@ class MatchRules {
                     }
                 }
 
-                if (ids.size != 0) {
+                if (ids.size != 0 && user_hiking) {
                     //pošlji notification za matchana pravila
                 }
 

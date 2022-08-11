@@ -3,6 +3,7 @@ package si.uni_lj.fri.pbd.sensecontext
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -24,6 +25,7 @@ import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.HistoryFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
+import si.uni_lj.fri.pbd.sensecontext.ui.OnboardingActivity
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -54,7 +56,9 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             when(item.itemId) {
                 R.id.page_1 -> {
                     replaceFragment(HistoryFragment())
-
+                    val intent =
+                        Intent(applicationContext, OnboardingActivity::class.java)
+                    startActivity(intent)
 
                     //sendJobAPI()
                     true
