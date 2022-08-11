@@ -27,7 +27,7 @@ class MainViewModel(application: Application?): AndroidViewModel(application!!) 
         cal1.set(Calendar.MILLISECOND, 0)
         matchedRules = repository.matchedRulesToday(cal1.time)
         user_hiking = repository.user_hiking
-        repository.user_hiking.setValue(LocationUpdatesService.user_is_hiking)
+        repository.user_hiking.value = LocationUpdatesService.user_is_hiking
         //user_hiking?.value = LocationUpdatesService.user_is_hiking
     }
 

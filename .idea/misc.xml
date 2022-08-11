@@ -12,7 +12,8 @@
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/onboarding_selected_dot_white.xml" value="0.228" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/onboarding_unselected_dot_white.xml" value="0.228" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/font/fonts.xml" value="0.565625" />
-        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_details.xml" value="0.3161231884057971" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_details.xml" value="0.1" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_hiking_warnings.xml" value="0.5" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_onboarding.xml" value="0.33" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/content_details.xml" value="0.3161231884057971" />
@@ -24,6 +25,7 @@
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_second.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_sensors.xml" value="0.4216485507246377" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_warnings.xml" value="0.483695652173913" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/fragment_warnings_details.xml" value="0.2629179331306991" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_dropdown.xml" value="0.3161231884057971" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_grid_item.xml" value="0.33" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/layout_hiking_warning.xml" value="0.3161231884057971" />

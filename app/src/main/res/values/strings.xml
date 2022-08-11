@@ -25,5 +25,8 @@
     <string name="text_onboarding_screeen_1">Če radi obiskujete gore pozimi,
 je aplikacija GoraNiNora prava odločitev. S kontekstno odvisnim sporočanjem dobite informacije, takrat ko jih potrebujete. \n \n Informacije so izobraževalne narave, ki pripomorejo k varnejšemu gibanju v zimskem času v gorah.</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_hiking_warnings">HikingWarnings</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
 
 </resources>

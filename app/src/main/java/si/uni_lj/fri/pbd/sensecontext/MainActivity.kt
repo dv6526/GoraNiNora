@@ -25,6 +25,7 @@ import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.HistoryFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
+import si.uni_lj.fri.pbd.sensecontext.ui.HikingWarningsActivity
 import si.uni_lj.fri.pbd.sensecontext.ui.OnboardingActivity
 import java.io.IOException
 import java.util.*
@@ -73,6 +74,9 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
                 }
                 R.id.page_3 -> {
                     replaceFragment((SettingsFragment()))
+                    val intent =
+                        Intent(applicationContext, HikingWarningsActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 else -> false

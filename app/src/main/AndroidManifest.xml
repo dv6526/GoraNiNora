@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
         <activity
+            android:name=".ui.HikingWarningsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.OnboardingActivity"
             android:exported="false" />
         <activity
