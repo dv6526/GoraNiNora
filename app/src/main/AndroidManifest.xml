@@ -21,6 +21,9 @@
             android:name=".ui.HikingWarningsActivity"
             android:exported="false" />
         <activity
+            android:name=".HandlePermissions"
+            android:exported="false" />
+        <activity
             android:name=".ui.OnboardingActivity"
             android:exported="false" />
         <activity

@@ -60,10 +60,6 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             when(item.itemId) {
                 R.id.page_1 -> {
                     replaceFragment(HistoryFragment())
-                    val intent =
-                        Intent(applicationContext, OnboardingActivity::class.java)
-                    startActivity(intent)
-
                     //sendJobAPI()
                     true
                 }
@@ -83,8 +79,20 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             }
         }
 
-        requestPermissions()
-        processingScope.launch {  prepopulateDatabaseWithRules() }
+        // show onboarding screen first time user opens app
+        val pref = getSharedPreferences("pref", MODE_PRIVATE)
+        if (!pref.getBoolean("onboarding", false)) {
+            val intent = Intent(applicationContext, OnboardingActivity::class.java)
+            startActivity(intent)
+
+            with(pref.edit()) {
+                putBoolean("onboarding", true)
+                apply()
+            }
+        }
+
+        //requestPermissions()
+        processingScope.launch { prepopulateDatabaseWithRules() }
     }
 
     override fun onStart() {
@@ -93,25 +101,13 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     }
 
     override fun stopActivityTransitionUpdates() {
-        removeActivityTransitionUpdates()
+        TrackingHelper.removeActivityTransitionUpdates(this)
     }
 
     override fun startActivityTransitionUpdates() {
-        requestActivityTransitionUpdates()
+        TrackingHelper.requestActivityTransitionUpdates(this)
     }
 
-    fun requestPermissions() {
-
-        if (isPermissionTransitionRecognitionGranted()) {
-            requestActivityTransitionUpdates()
-            requestPermissionForLocation()
-        } else {
-            requestPermissionTransitionRecognition()
-        }
-
-
-
-    }
 
     fun setWeatherUpdatesTest() {
         val workRequest = OneTimeWorkRequestBuilder<WeatherWorker>().build()
@@ -141,24 +137,6 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
 
     fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(binding.frame.id, fragment).commit()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_ID_ACTIVITY_PERMISSIONS) {
-            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Permission denied")
-            } else {
-                Log.d(TAG, "Permission granted")
-                requestActivityTransitionUpdates()
-                requestPermissionForLocation()
-            }
-        } else if (requestCode == LOCATION_PERMISSION_CODE) {
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                requestPermissionForLocation()
-            }
-        }
     }
 
 

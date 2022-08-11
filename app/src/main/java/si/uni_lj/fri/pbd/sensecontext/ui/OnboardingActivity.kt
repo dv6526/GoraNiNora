@@ -1,5 +1,6 @@
 package si.uni_lj.fri.pbd.sensecontext.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -7,6 +8,8 @@ import android.widget.TextView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import si.uni_lj.fri.pbd.sensecontext.Adapters.OnboardingViewPagerAdapter
+import si.uni_lj.fri.pbd.sensecontext.HandlePermissions
+import si.uni_lj.fri.pbd.sensecontext.MainActivity
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityOnboardingBinding
@@ -45,6 +48,8 @@ class OnboardingActivity : AppCompatActivity() {
             val cur_item = mViewPager.currentItem
             if (getItem() > 5) {
                 finish()
+                val intent = Intent(applicationContext, HandlePermissions::class.java)
+                startActivity(intent)
             } else {
                 mViewPager.setCurrentItem(getItem() + 1, true)
             }
@@ -56,4 +61,6 @@ class OnboardingActivity : AppCompatActivity() {
     private fun getItem(): Int {
         return mViewPager.currentItem
     }
+
+
 }

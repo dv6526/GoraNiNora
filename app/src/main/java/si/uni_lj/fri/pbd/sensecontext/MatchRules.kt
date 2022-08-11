@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
+import si.uni_lj.fri.pbd.sensecontext.TrackingHelper.Companion.processingScope
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
