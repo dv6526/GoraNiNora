@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "danger_rule_table")
-data class DangerRule(
+data class  DangerRule(
     @PrimaryKey(autoGenerate = true)
     var dang_id: Long,
     val rule_id: Long,

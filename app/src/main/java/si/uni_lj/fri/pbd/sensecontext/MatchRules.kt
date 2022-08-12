@@ -43,7 +43,7 @@ class MatchRules {
             for (rule in rwd) {
                 var rule_is_match = true
                 val aspects = rule.rule.aspect
-                if (aspects != null) {
+                if (aspects != null && loc.aspect != null) {
                     for (aspect in aspects.split(",")) {
                         when (aspect) {
                             "N" -> {
@@ -63,12 +63,12 @@ class MatchRules {
                 }
 
                 val min_slope = rule.rule.min_slope
-                if (min_slope != null && loc.slope < min_slope) {
+                if (min_slope != null && loc.slope != null  && loc.slope < min_slope) {
                     rule_is_match = false
                 }
 
                 val max_slope = rule.rule.max_slope
-                if (max_slope != null && loc.slope > max_slope) {
+                if (max_slope != null && loc.slope != null && loc.slope > max_slope) {
                     rule_is_match = false
                 }
 
@@ -172,7 +172,7 @@ class MatchRules {
                     if (!user_hiking) {
                         area_id = pt.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
                     }
-                    val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_id, area_id)
+                    val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_type, area_id)
 
                     if (pts2.size == 0) {
                         //ni patterna za trenutno območje na katerem se nahajamo
@@ -233,7 +233,7 @@ class MatchRules {
                     if (!user_hiking) {
                         area_id = problem.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
                     }
-                    val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id, problem.problem_id, loc.elevation)
+                    val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id, problem.problem_type, loc.elevation)
                     //val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1 , 3, 2500.0)
                     if (problems2.size == 0) {
                         rule_is_match = false

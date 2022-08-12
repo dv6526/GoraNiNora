@@ -4,6 +4,9 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -28,9 +31,7 @@ import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Location
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
-import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -70,13 +71,21 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     //Log.d(TAG, "Cur date $curDate")
                     Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
-                    if (isInsideMountainsFence(46.345664175687425, 13.627491787033, context)) {
+                    var internetAvailable = checkForInternet(context)
+                    var isInsideArea = isInsideMountainsFence(46.345664175687425, 13.627491787033, context)
+                    if (isInsideArea && internetAvailable) {
                     //if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
                         //sendJobAPI(location.latitude, location.longitude, context)
                         sendJobAPI(46.345664175687425, 13.627491787033, context) //this coordinate is inside av_area_id 2
+                    } else if(isInsideArea && !internetAvailable && location.hasAltitude()) {
+                        var elevation = location.altitude
+                        saveLocationDatabase(location.latitude, location.latitude, elevation, null, null, context)
+                        if (!LocationUpdatesService.user_is_hiking)
+                            detectUserIsHiking(context)
+                        else {
+                            MatchRules.matchRules(context, true)
+                        }
                     }
-
-
                     prevDate = curDate
                 }
 
@@ -227,7 +236,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         })
     }
 
-    fun saveLocationDatabase(lat: Double, lon: Double, elevation: Double, slope: Double, aspect: Double, context: Context) {
+    fun saveLocationDatabase(lat: Double, lon: Double, elevation: Double, slope: Double?, aspect: Double?, context: Context) {
         val db = ApplicationDatabase.getDatabase(context)
         val dao = db.dao()
         val repository = Repository(dao)
@@ -277,6 +286,30 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText)
         with(NotificationManagerCompat.from(context)) {
             notify(DetectedTransitionReceiver.NOTIFICATION_ID, builder.build())
+        }
+    }
+
+    private fun checkForInternet(context: Context): Boolean {
+
+        // register activity with the connectivity manager service
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        } else {
+            // if the android version is below M
+            @Suppress("DEPRECATION") val networkInfo =
+                connectivityManager.activeNetworkInfo ?: return false
+            @Suppress("DEPRECATION")
+            return networkInfo.isConnected
         }
     }
 

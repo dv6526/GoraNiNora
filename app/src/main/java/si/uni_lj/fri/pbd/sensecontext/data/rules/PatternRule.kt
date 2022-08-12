@@ -12,5 +12,5 @@ data class PatternRule(
     var day_delay: Int,
     var hour_max: Int,
     var hour_min: Int,
-    var pattern_id: Int
+    var pattern_type: Int
 )

@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "weather_description_table")
-data class WeatherDescription(
+data class   WeatherDescription(
         @PrimaryKey(autoGenerate = true)
         val weather_description_id: Long,
         val rule_id: Long,

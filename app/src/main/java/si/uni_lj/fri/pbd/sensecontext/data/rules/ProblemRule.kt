@@ -13,5 +13,5 @@ data class ProblemRule(
     var day_delay: Int,
     var hour_max: Int,
     var hour_min: Int,
-    var problem_id: Int
+    var problem_type: Int
 )
