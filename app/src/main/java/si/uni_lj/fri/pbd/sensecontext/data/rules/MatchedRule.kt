@@ -13,5 +13,6 @@ data class MatchedRule (
     var read: Boolean,
     var name: String,
     var text: String,
-    var hiking: Boolean
+    var hiking: Boolean,
+    var area_id: Int
 )

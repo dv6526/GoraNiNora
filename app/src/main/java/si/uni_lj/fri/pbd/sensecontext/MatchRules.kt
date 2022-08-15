@@ -272,7 +272,8 @@ class MatchRules {
                             false,
                             rules_names[index],
                             rules_texts[index],
-                            user_hiking
+                            user_hiking,
+                            area_id!!
                         )
                     )
                 }

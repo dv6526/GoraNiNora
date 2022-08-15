@@ -25,6 +25,7 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
     private var mViewModel = mViewModel
     private var fragment = fragmentRef
     private var context = contextRef
+    private var selected_position: Int = 0
     fun setItemList(items: List<MatchedRule>?) {
         // filtriraj data
         itemsList = items?.let { filterData(it) }
@@ -102,7 +103,11 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                 var areas = arrayOf("Izberi območje", "Južni in zahodni Julijci", "Osrednji Julijci in zahodne Karavanke", "Kamniško-Savinjske Alpe in V Karavanke")
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(context, R.layout.selected_item, areas)
                 adapter.setDropDownViewResource(R.layout.dropdown_item)
+                val sharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
+                selected_position = sharedPreferences.getInt("selected_spinner_position", 0)
                 holder2.spinner.adapter = adapter
+                holder2.spinner.setSelection(selected_position, false)
+                //holder2.spinner.setSelection(0, false)
                 holder2.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -110,11 +115,13 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                         position: Int,
                         id: Long
                     ) {
-                        val pref = context.applicationContext.getSharedPreferences("pref", AppCompatActivity.MODE_PRIVATE)
-                        with(pref.edit()) {
-                            putInt("area", position)
-                            apply()
-                        }
+
+                        val editor = sharedPreferences.edit()
+                        editor.putInt("selected_spinner_position", position)
+                        editor.commit()
+                        selected_position = position
+                        notifyItemRangeChanged(4, itemCount-4)
+
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -144,7 +151,7 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                 else
                     holder5.image.setImageResource(R.drawable.ic_bell_solid)
 
-                if (mViewModel.user_hiking?.value!! && item.hiking || !item.hiking) {
+                if (mViewModel.user_hiking?.value!! && item.hiking || !item.hiking  && item.area_id == selected_position+1) {
                     holder5.card.visibility = View.VISIBLE
                 } else {
                     holder5.card.visibility = View.GONE
@@ -231,9 +238,10 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
             filtered.addAll(filt3)
         }
 
-        return filtered.toList()
 
+        return filtered.toList()
     }
+
 
 
 
