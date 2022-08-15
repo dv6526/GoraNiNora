@@ -3,14 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/corner_radius.xml" value="0.1" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_back.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_baseline_ac_unit_24.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_baseline_hiking.xml" value="0.4055" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_bell_solid.xml" value="0.5305" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_gorininora.xml" value="0.5305" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_launcher_background.xml" value="0.5305" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_prebrano.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_trenutno_opozorilo.xml" value="0.1" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/onboarding_selected_dot_white.xml" value="0.228" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/onboarding_unselected_dot_white.xml" value="0.228" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/onboarding_viewpager_selector_white.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/font/fonts.xml" value="0.565625" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_details.xml" value="0.1" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/layout/activity_hiking_warnings.xml" value="0.5" />

@@ -107,6 +107,10 @@ class Repository(private val databaseDao: DatabaseDao) {
         return databaseDao.getMatchedRuleByIdDate(date, rule_id)
     }
 
+    fun updateMatchedRuleIsRead(rule_id: Long) {
+        databaseDao.updateMatchedRuleIsRead(rule_id)
+    }
+
 
 
 }

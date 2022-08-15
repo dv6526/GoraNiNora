@@ -15,7 +15,6 @@ class DetailsActivity : AppCompatActivity() {
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         val view = binding!!.root
         setContentView(view)
-
         val header = intent.getStringExtra("header")
         val text = intent.getStringExtra("desc")
         binding!!.textHeader.text = header

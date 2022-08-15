@@ -31,6 +31,10 @@ class MainViewModel(application: Application?): AndroidViewModel(application!!) 
         //user_hiking?.value = LocationUpdatesService.user_is_hiking
     }
 
+    fun ruleRead(ruleid: Long) {
+        repository.updateMatchedRuleIsRead(ruleid)
+    }
+
 
     override fun onCleared() {
         super.onCleared()

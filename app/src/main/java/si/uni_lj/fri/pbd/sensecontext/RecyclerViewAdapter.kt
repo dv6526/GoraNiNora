@@ -3,6 +3,7 @@ package si.uni_lj.fri.pbd.sensecontext
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +21,9 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
     private var mViewModel = mViewModel
     private var fragment = fragmentRef
     private var context = contextRef
-    private var showUserIsHiking: Boolean = false
     fun setItemList(items: List<MatchedRule>?) {
-        itemsList = items
+        // filtriraj data
+        itemsList = items?.let { filterData(it) }
         notifyDataSetChanged()
     }
 
@@ -111,12 +112,25 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                 if (item.hiking)
                     holder5.image.setImageResource(R.drawable.ic_trenutno_opozorilo)
 
+                if (mViewModel.user_hiking?.value!! && item.hiking || !item.hiking) {
+                    holder5.card.visibility = View.VISIBLE
+                } else {
+                    holder5.card.visibility = View.GONE
+                }
+
+                if (item.read) {
+                    holder5.read.visibility = View.VISIBLE
+                }
+
                 holder5.card.setOnClickListener {
 
                     val intent = Intent(context, DetailsActivity::class.java).apply {
                         putExtra("header", item.name)
                         putExtra("desc", item.text)
                     }
+
+                    mViewModel.ruleRead(item.rule_id)
+
                     context.startActivity(intent)
 
 
@@ -134,6 +148,7 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
         var image: ImageView = itemView.findViewById(R.id.icon)
         var desc: TextView = itemView.findViewById(R.id.desc_text)
         var card: CardView = itemView.findViewById(R.id.card)
+        var read: ImageView = itemView.findViewById(R.id.read)
         var linear_layour: LinearLayout = itemView.findViewById(R.id.layout_card)
         var date_text: TextView = itemView.findViewById(R.id.date_text)
     }
@@ -152,6 +167,39 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
     }
 
     class ViewHolderLegend(itemView: View): RecyclerView.ViewHolder(itemView) {
+
+    }
+
+    fun filterData(items: List<MatchedRule>): List<MatchedRule> {
+        val filtered: MutableList<MatchedRule> = arrayListOf()
+        var filt1 = items.filter {
+            it.hiking && !it.read
+        }?.sortedBy {
+            it.date
+        }
+        if (filt1 != null) {
+            filtered.addAll(filt1)
+        }
+
+        var filt2 = items.filter {
+            !it.hiking && !it.read
+        }?.sortedBy {
+            it.date
+        }
+        if (filt2 != null) {
+            filtered.addAll(filt2)
+        }
+
+        var filt3 = items.filter {
+            it.read
+        }?.sortedBy {
+            it.date
+        }
+        if (filt3 != null) {
+            filtered.addAll(filt3)
+        }
+
+        return filtered.toList()
 
     }
 

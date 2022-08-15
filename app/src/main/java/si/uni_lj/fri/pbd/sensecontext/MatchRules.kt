@@ -33,9 +33,9 @@ class MatchRules {
             } else {
                 rwd = repository.getRulesNotHiking()
             }
-
-            var area_id = LocationUpdatesService.av_area_id!! // trenutno opozorilo -> gledamo dangerje, patterne in probleme glede na trenutno lokacijo
-            var matched_rule = false // če smo imeli ujemanje vsaj z enim rule-om
+            var area_id: Int? = null
+            if  (user_hiking)
+                area_id = LocationUpdatesService.av_area_id!! // trenutno opozorilo -> gledamo dangerje, patterne in probleme glede na trenutno lokacijo
             var ids: MutableList<Long> = mutableListOf()
             var rules_names: MutableList<String> = mutableListOf()
             var rules_texts: MutableList<String> = mutableListOf()
@@ -140,9 +140,9 @@ class MatchRules {
 
                     if (whs.size > 0)
                         temp = temp/whs.size
-                    if (wd.temp_avg_min != null && temp < wd.temp_avg_min)
+                    if (wd.temp_avg_min != null && temp <= wd.temp_avg_min)
                         rule_is_match = false
-                    if (wd.temp_avg_max != null && temp > wd.temp_avg_max)
+                    if (wd.temp_avg_max != null && temp >= wd.temp_avg_max)
                         rule_is_match = false
                 }
 
@@ -172,7 +172,9 @@ class MatchRules {
                     if (!user_hiking) {
                         area_id = pt.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
                     }
-                    val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_type, area_id)
+                    val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_type,
+                        area_id!!
+                    )
 
                     if (pts2.size == 0) {
                         //ni patterna za trenutno območje na katerem se nahajamo
@@ -207,7 +209,7 @@ class MatchRules {
                     if (!user_hiking) {
                         area_id = danger.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
                     }
-                    val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id, loc.elevation, danger.value)
+                    val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id!!, loc.elevation, danger.value)
                     //val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1, loc.elevation, 2)
                     if (dangers2.size == 0) {
                         rule_is_match = false
@@ -233,7 +235,7 @@ class MatchRules {
                     if (!user_hiking) {
                         area_id = problem.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
                     }
-                    val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id, problem.problem_type, loc.elevation)
+                    val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id!!, problem.problem_type, loc.elevation)
                     //val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1 , 3, 2500.0)
                     if (problems2.size == 0) {
                         rule_is_match = false
@@ -255,33 +257,41 @@ class MatchRules {
                 }
             }
 
-            processingScope.launch {
+            if (user_hiking) {
+                processingScope.launch {
 
-                ids.forEachIndexed { index, id ->
-                    repository.addMatchedRule(
-                        MatchedRule(0L, id, Calendar.getInstance().time, false, rules_names[index], rules_texts[index], user_hiking)
-                    )
+                    ids.forEachIndexed { index, id ->
+                        repository.addMatchedRule(
+                            MatchedRule(
+                                0L,
+                                id,
+                                Calendar.getInstance().time,
+                                false,
+                                rules_names[index],
+                                rules_texts[index],
+                                user_hiking
+                            )
+                        )
+                    }
+                    val desc = StringBuilder()
+                    rules_names.forEachIndexed { idx, rule ->
+                        if (idx == rules_names.size - 1)
+                            desc.append(rule)
+                        else
+                            desc.append(rule + ", ")
+                    }
+                    var title: String? = null
+                    when (rules_names.size) {
+                        1 -> title = "Zaznano 1 opozorilo!"
+                        2 -> title = "Zaznana 2 opozorila"
+                        3 -> title = "Zaznana 3 opozorila"
+                        3 -> title = "Zaznana 4 opozorila"
+                        else -> "Zaznanih " + rules_names.size + " opozoril!"
+                    }
+                    if (title != null) {
+                        showNotification(title, desc.toString(), context)
+                    }
                 }
-                val desc = StringBuilder()
-                rules_names.forEachIndexed { idx, rule ->
-                    if (idx == rules_names.size - 1)
-                        desc.append(rule)
-                    else
-                        desc.append(rule + ", ")
-                }
-                var title:String? = null
-                when (rules_names.size) {
-                    1 -> title = "Zaznano 1 opozorilo!"
-                    2 -> title = "Zaznana 2 opozorila"
-                    3 -> title = "Zaznana 3 opozorila"
-                    3 -> title = "Zaznana 4 opozorila"
-                    else -> "Zaznanih " + rules_names.size + " opozoril!"
-                }
-                if (title != null) {
-                    showNotification(title, desc.toString(), context)
-                }
-
-
             }
 
         }
@@ -293,18 +303,11 @@ class MatchRules {
         private fun showNotification(warningTitle:String, warningText: String, context: Context) {
 
             // Create an Intent for the activity you want to start
-            val resultIntent = Intent(context, HikingWarningsActivity::class.java)
-            // Create the TaskStackBuilder
-            val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-                // Add the intent, which inflates the back stack
-                addNextIntentWithParentStack(resultIntent)
-                // Get the PendingIntent containing the entire back stack
-                getPendingIntent(0,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            }
+            val intent = Intent(context, HikingWarningsActivity::class.java)
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
             val builder = NotificationCompat.Builder(context, MainActivity.CHANNEL_ID_NOTIFY).setSmallIcon(
-                R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText).setContentIntent(resultPendingIntent)
+                R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText).setContentIntent(pendingIntent)
             with(NotificationManagerCompat.from(context)) {
                 notify(13, builder.build())
             }

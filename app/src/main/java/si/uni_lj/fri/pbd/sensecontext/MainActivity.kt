@@ -98,6 +98,8 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     override fun onStart() {
         super.onStart()
         setWeatherUpdatesTest()
+        startActivityTransitionUpdates()
+        MatchRules.matchRules(this, false)
     }
 
     override fun stopActivityTransitionUpdates() {
@@ -119,8 +121,8 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     fun setWeatherUpdates() {
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
-        dueDate.set(Calendar.HOUR_OF_DAY, 10)
-        dueDate.set(Calendar.MINUTE, 13)
+        dueDate.set(Calendar.HOUR_OF_DAY, 17)
+        dueDate.set(Calendar.MINUTE, 49)
         dueDate.set(Calendar.SECOND, 0)
 
         if (dueDate.before(currentDate)) {
@@ -218,6 +220,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             }
 
             //testRules()
+
 
             //val rule1 = dao.add_rule(Rule(0L, "S", 30.0, 45.0, null, null, true))
             //val weather_desc1 = dao.add_weather_description(WeatherDescription(0L, 0, 10.0, 15.0, 8, 12,null, null, null, "1000"))
