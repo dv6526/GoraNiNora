@@ -8,7 +8,6 @@ data class  DangerRule(
     @PrimaryKey(autoGenerate = true)
     var dang_id: Long,
     val rule_id: Long,
-    var av_area_id: Int?,
     var check_elevation: Boolean,
     var day_delay: Int,
     var am: Boolean,

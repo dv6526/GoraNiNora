@@ -2,12 +2,13 @@ package si.uni_lj.fri.pbd.sensecontext
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.media.Image
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -15,6 +16,9 @@ import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
 import si.uni_lj.fri.pbd.sensecontext.ui.DetailsActivity
 import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragment, contextRef: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemsList: List<MatchedRule>? = null
@@ -66,6 +70,7 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
 
@@ -98,6 +103,24 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(context, R.layout.selected_item, areas)
                 adapter.setDropDownViewResource(R.layout.dropdown_item)
                 holder2.spinner.adapter = adapter
+                holder2.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val pref = context.applicationContext.getSharedPreferences("pref", AppCompatActivity.MODE_PRIVATE)
+                        with(pref.edit()) {
+                            putInt("area", position)
+                            apply()
+                        }
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
+                }
+
 
             }
             3 -> {
@@ -109,8 +132,17 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                 holder5.header.text = item.name
                 holder5.desc.text = item.text
 
+                val pattern1 = "dd-MM-yyyy"
+                val pattern2 = "HH"
+                val date1: String = SimpleDateFormat(pattern1).format(item.date)
+                val date2: String = SimpleDateFormat(pattern2).format(item.date)
+                holder5.date_text.text = date1 + " ob " + date2 + "ih"
+
+
                 if (item.hiking)
                     holder5.image.setImageResource(R.drawable.ic_trenutno_opozorilo)
+                else
+                    holder5.image.setImageResource(R.drawable.ic_bell_solid)
 
                 if (mViewModel.user_hiking?.value!! && item.hiking || !item.hiking) {
                     holder5.card.visibility = View.VISIBLE
@@ -120,6 +152,8 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
 
                 if (item.read) {
                     holder5.read.visibility = View.VISIBLE
+                } else {
+                    holder5.read.visibility = View.GONE
                 }
 
                 holder5.card.setOnClickListener {
@@ -129,10 +163,9 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
                         putExtra("desc", item.text)
                     }
 
+                    //označi, da je bilo praivlo prebrano
                     mViewModel.ruleRead(item.rule_id)
-
                     context.startActivity(intent)
-
 
                 }
             }
@@ -149,7 +182,6 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
         var desc: TextView = itemView.findViewById(R.id.desc_text)
         var card: CardView = itemView.findViewById(R.id.card)
         var read: ImageView = itemView.findViewById(R.id.read)
-        var linear_layour: LinearLayout = itemView.findViewById(R.id.layout_card)
         var date_text: TextView = itemView.findViewById(R.id.date_text)
     }
 

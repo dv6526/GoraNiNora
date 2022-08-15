@@ -19,7 +19,7 @@ class Repository(private val databaseDao: DatabaseDao) {
         databaseDao.add_weather_hour(weatherHour)
     }
 
-    fun getWeatherHoursBetweenDate(from: Date, to: Date): List<WeatherHour> = databaseDao.getWeatherHoursBetweenDate(from, to)
+    fun getWeatherHoursBetweenDate(from: Date, to: Date, av_area: String): List<WeatherHour> = databaseDao.getWeatherHoursBetweenDate(from, to, av_area)
 
     suspend fun addLocation(location: Location) {
         databaseDao.add_location(location)

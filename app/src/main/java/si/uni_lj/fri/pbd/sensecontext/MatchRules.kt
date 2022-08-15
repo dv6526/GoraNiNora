@@ -11,6 +11,7 @@ import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.TrackingHelper.Companion.processingScope
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
+import si.uni_lj.fri.pbd.sensecontext.data.WeatherHour
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.data.rules.RuleWithLists
 import si.uni_lj.fri.pbd.sensecontext.ui.HikingWarningsActivity
@@ -25,17 +26,18 @@ class MatchRules {
             val db = ApplicationDatabase.getDatabase(context)
             val dao = db.dao()
             val repository = Repository(dao)
+            var area_id: Int? = null
 
             val loc =repository.getLatestLocation()
             var rwd: List<RuleWithLists>? = null
             if (user_hiking) {
                 rwd = repository.getRulesHiking()
+                area_id = LocationUpdatesService.av_area_id!! // trenutno opozorilo -> gledamo dangerje, patterne in probleme glede na trenutno lokacijo
             } else {
                 rwd = repository.getRulesNotHiking()
             }
-            var area_id: Int? = null
-            if  (user_hiking)
-                area_id = LocationUpdatesService.av_area_id!! // trenutno opozorilo -> gledamo dangerje, patterne in probleme glede na trenutno lokacijo
+
+
             var ids: MutableList<Long> = mutableListOf()
             var rules_names: MutableList<String> = mutableListOf()
             var rules_texts: MutableList<String> = mutableListOf()
@@ -43,6 +45,8 @@ class MatchRules {
             for (rule in rwd) {
                 var rule_is_match = true
                 val aspects = rule.rule.aspect
+                if (!user_hiking)
+                    area_id = rule.rule.av_area_id //all problem, patterns, dangers, weather for this area_id
                 if (aspects != null && loc.aspect != null) {
                     for (aspect in aspects.split(",")) {
                         when (aspect) {
@@ -101,8 +105,15 @@ class MatchRules {
                     cal2.set(Calendar.SECOND, 0)
                     cal2.set(Calendar.MILLISECOND, 0)
                     val str2 = sdf.format(cal2.time)
-                    val whs = repository.getWeatherHoursBetweenDate(cal1.time, cal2.time)
+
+
+                    val whs = weatherHoursForAvalancheArea(area_id, context, repository, cal1, cal2)
                     //check if weather description matches weather from ARSO
+
+                    if (whs.size == 0) {
+                        rule_is_match = false
+                    }
+
 
                     // AVG TEMP
                     var vremenski_pojav_occured = false
@@ -169,9 +180,7 @@ class MatchRules {
                     val bulletin = repository.getLatestBulletin()
                     //val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_id, 1)
 
-                    if (!user_hiking) {
-                        area_id = pt.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
-                    }
+
                     val pts2 = repository.getPatternsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, pt.pattern_type,
                         area_id!!
                     )
@@ -206,9 +215,6 @@ class MatchRules {
                     cal2.set(Calendar.SECOND, 0)
                     cal2.set(Calendar.MILLISECOND, 0)
                     val bulletin = repository.getLatestBulletin()
-                    if (!user_hiking) {
-                        area_id = danger.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
-                    }
                     val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id!!, loc.elevation, danger.value)
                     //val dangers2 = repository.getDangersForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1, loc.elevation, 2)
                     if (dangers2.size == 0) {
@@ -232,9 +238,6 @@ class MatchRules {
                     cal2.set(Calendar.SECOND, 0)
                     cal2.set(Calendar.MILLISECOND, 0)
                     val bulletin = repository.getLatestBulletin()
-                    if (!user_hiking) {
-                        area_id = problem.av_area_id!! // vemo, da imamo rule, ki so za splošna opozorila in mora obstajati območje.
-                    }
                     val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, area_id!!, problem.problem_type, loc.elevation)
                     //val problems2 = repository.getProblemsForDate(bulletin.av_bulletin_id, cal1.time, cal2.time, 1 , 3, 2500.0)
                     if (problems2.size == 0) {
@@ -257,42 +260,42 @@ class MatchRules {
                 }
             }
 
-            if (user_hiking) {
-                processingScope.launch {
 
-                    ids.forEachIndexed { index, id ->
-                        repository.addMatchedRule(
-                            MatchedRule(
-                                0L,
-                                id,
-                                Calendar.getInstance().time,
-                                false,
-                                rules_names[index],
-                                rules_texts[index],
-                                user_hiking
-                            )
+            processingScope.launch {
+
+                ids.forEachIndexed { index, id ->
+                    repository.addMatchedRule(
+                        MatchedRule(
+                            0L,
+                            id,
+                            Calendar.getInstance().time,
+                            false,
+                            rules_names[index],
+                            rules_texts[index],
+                            user_hiking
                         )
-                    }
-                    val desc = StringBuilder()
-                    rules_names.forEachIndexed { idx, rule ->
-                        if (idx == rules_names.size - 1)
-                            desc.append(rule)
-                        else
-                            desc.append(rule + ", ")
-                    }
-                    var title: String? = null
-                    when (rules_names.size) {
-                        1 -> title = "Zaznano 1 opozorilo!"
-                        2 -> title = "Zaznana 2 opozorila"
-                        3 -> title = "Zaznana 3 opozorila"
-                        3 -> title = "Zaznana 4 opozorila"
-                        else -> "Zaznanih " + rules_names.size + " opozoril!"
-                    }
-                    if (title != null) {
-                        showNotification(title, desc.toString(), context)
-                    }
+                    )
+                }
+                val desc = StringBuilder()
+                rules_names.forEachIndexed { idx, rule ->
+                    if (idx == rules_names.size - 1)
+                        desc.append(rule)
+                    else
+                        desc.append(rule + ", ")
+                }
+                var title: String? = null
+                when (rules_names.size) {
+                    1 -> title = "Zaznano 1 opozorilo!"
+                    2 -> title = "Zaznana 2 opozorila"
+                    3 -> title = "Zaznana 3 opozorila"
+                    3 -> title = "Zaznana 4 opozorila"
+                    else -> "Zaznanih " + rules_names.size + " opozoril!"
+                }
+                if (title != null && user_hiking) {
+                    showNotification(title, desc.toString(), context)
                 }
             }
+
 
         }
         //poglej katera pravila so se matchala, shrani si idje
@@ -311,6 +314,24 @@ class MatchRules {
             with(NotificationManagerCompat.from(context)) {
                 notify(13, builder.build())
             }
+        }
+
+        private fun weatherHoursForAvalancheArea(av_area_id: Int?, context: Context, repository: Repository, cal1: Calendar, cal2: Calendar): List<WeatherHour> {
+            val whs = mutableListOf<WeatherHour>()
+            when (av_area_id) {
+                2 -> {
+                    whs.addAll(repository.getWeatherHoursBetweenDate(cal1.time, cal2.time, context.resources.getString(R.string.weather_area_2)))
+                }
+                3 -> {
+                    whs.addAll(repository.getWeatherHoursBetweenDate(cal1.time, cal2.time, context.resources.getString(R.string.weather_area_1)))
+                    whs.addAll(repository.getWeatherHoursBetweenDate(cal1.time, cal2.time, context.resources.getString(R.string.weather_area_4)))
+                }
+                4 -> {
+                    whs.addAll(repository.getWeatherHoursBetweenDate(cal1.time, cal2.time, context.resources.getString(R.string.weather_area_3)))
+                    whs.addAll(repository.getWeatherHoursBetweenDate(cal1.time, cal2.time, context.resources.getString(R.string.weather_area_4)))
+                }
+            }
+            return whs.toList()
         }
     }
 

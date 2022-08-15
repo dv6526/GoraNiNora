@@ -198,24 +198,24 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             val rules = Gson().fromJson(jsonString, Rules::class.java)
 
             for (rule in rules.rules) {
-                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.notification_name, rule.notification_text))
+                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.av_area_id, rule.notification_name, rule.notification_text))
                 for (wd in rule.weather_descriptions) {
                     repository.addWeatherDescription(
-                        WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                        WeatherDescription(0L, rule1, wd!!.av_area_id, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
                         wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation
                     )
                     )
                 }
                 for (pattern in rule.patterns) {
-                    repository.addPatternRule(PatternRule(0L, rule1, pattern?.av_area_id, pattern!!.day_delay, pattern.hour_max, pattern.hour_min, pattern.pattern_id))
+                    repository.addPatternRule(PatternRule(0L, rule1, pattern!!.day_delay, pattern.hour_max, pattern.hour_min, pattern.pattern_id))
                 }
 
                 for (problem in rule.problems) {
-                    repository.addProblemRule(ProblemRule(0L, rule1, problem?.av_area_id, problem!!.check_elevation, problem.day_delay, problem.hour_max, problem.hour_min, problem.problem_id))
+                    repository.addProblemRule(ProblemRule(0L, rule1,  problem!!.check_elevation, problem.day_delay, problem.hour_max, problem.hour_min, problem.problem_id))
                 }
 
                 for (danger in rule.dangers) {
-                    repository.addDangerRule(DangerRule(0L, rule1, danger?.av_area_id, danger!!.check_elevation, danger.day_delay, danger.am, danger.value))
+                    repository.addDangerRule(DangerRule(0L, rule1, danger!!.check_elevation, danger.day_delay, danger.am, danger.value))
                 }
             }
 

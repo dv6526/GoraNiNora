@@ -29,8 +29,8 @@ interface DatabaseDao {
     @Query("SELECT * FROM location_table WHERE date BETWEEN :from AND :to")
     fun fetchLocationsBetweenDate(from: Date, to: Date): List<Location>
 
-    @Query("SELECT * FROM weather_table WHERE date BETWEEN :from AND :to")
-    fun getWeatherHoursBetweenDate(from: Date, to: Date): List<WeatherHour>
+    @Query("SELECT * FROM weather_table WHERE date BETWEEN :from AND :to AND area=:av_area")
+    fun getWeatherHoursBetweenDate(from: Date, to: Date, av_area: String): List<WeatherHour>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add_rule(rule: Rule): Long
