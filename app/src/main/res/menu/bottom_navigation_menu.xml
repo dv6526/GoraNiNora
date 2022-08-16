@@ -4,15 +4,15 @@
         android:id="@+id/page_1"
         android:enabled="true"
         android:title="Zgodovina"
-        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+        android:icon="@drawable/ic_zgodovina"/>
     <item
         android:id="@+id/page_2"
         android:enabled="true"
         android:title="Opozorila"
-        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+        android:icon="@drawable/ic_opozorila"/>
     <item
         android:id="@+id/page_3"
         android:enabled="true"
         android:title="Nastavitve"
-        android:icon="@drawable/ic_baseline_ac_unit_24"/>
+        android:icon="@drawable/ic_nastavitve"/>
 </menu>

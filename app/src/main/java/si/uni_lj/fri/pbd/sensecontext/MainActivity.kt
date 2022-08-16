@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -19,13 +21,20 @@ import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
 import si.uni_lj.fri.pbd.sensecontext.Weather.AvalancheBulletinWorker
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
-import si.uni_lj.fri.pbd.sensecontext.data.*
+import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
+import si.uni_lj.fri.pbd.sensecontext.data.DatabaseDao
+import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.data.rules.*
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
-import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
 import si.uni_lj.fri.pbd.sensecontext.fragments.HistoryFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.neverAskAgainClicked1
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.neverAskAgainClicked2
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.neverAskAgainClicked3
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.switch1
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.switch2
+import si.uni_lj.fri.pbd.sensecontext.fragments.SettingsFragment.Companion.switch3
 import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
-import si.uni_lj.fri.pbd.sensecontext.ui.HikingWarningsActivity
 import si.uni_lj.fri.pbd.sensecontext.ui.OnboardingActivity
 import java.io.IOException
 import java.util.*
@@ -38,6 +47,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
         const val CHANNEL_ID_WARNING = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_WARNING"
         const val CHANNEL_ID_NOTIFY = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_NOTIFY"
+        var deniedPermission = true
 
     }
 
@@ -61,6 +71,10 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
                 R.id.page_1 -> {
                     replaceFragment(HistoryFragment())
                     //sendJobAPI()
+                    val intent =
+                        Intent(applicationContext, OnboardingActivity::class.java)
+                    startActivity(intent)
+
                     true
                 }
                 R.id.page_2 -> {
@@ -69,10 +83,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
                     true
                 }
                 R.id.page_3 -> {
-                    replaceFragment((SettingsFragment()))
-                    val intent =
-                        Intent(applicationContext, HikingWarningsActivity::class.java)
-                    startActivity(intent)
+                    replaceFragment(SettingsFragment())
                     true
                 }
                 else -> false
@@ -82,7 +93,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         // show onboarding screen first time user opens app
         val pref = getSharedPreferences("pref", MODE_PRIVATE)
         if (!pref.getBoolean("onboarding", false)) {
-            val intent = Intent(applicationContext, OnboardingActivity::class.java)
+            val intent = Intent(applicationContext, OnboardingActivity::class.java).putExtra("request_permissions", true)
             startActivity(intent)
 
             with(pref.edit()) {
@@ -109,6 +120,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
     override fun startActivityTransitionUpdates() {
         TrackingHelper.requestActivityTransitionUpdates(this)
     }
+
 
 
     fun setWeatherUpdatesTest() {
@@ -243,6 +255,62 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         val rwd = repository.getRulesWithLists()
         val rwdnh = repository.getRulesNotHiking()
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_ID_ACTIVITY_PERMISSIONS) {
+            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Log.d(MainActivity.TAG, "Permission denied")
+                val neverAskAgain = !shouldShowRequestPermissionRationale(permissions[0]) // neverAskAgain == true when user denied with never ask again
+                if (neverAskAgain && !neverAskAgainClicked1) { // user previously did not clicked neverAskAgain
+                    neverAskAgainClicked1 = true
+                } else if (neverAskAgain && neverAskAgainClicked1) { // user has previously denied with never ask again
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri: Uri = Uri.fromParts("package", getPackageName(), null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+                switch1.setChecked(false)
+            } else {
+                Log.d(MainActivity.TAG, "Permission granted")
+                TrackingHelper.requestActivityTransitionUpdates(this)
+            }
+        } else if (requestCode == LOCATION_PERMISSION_CODE) {
+            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Log.d(MainActivity.TAG, "Permission denied")
+                val neverAskAgain = !shouldShowRequestPermissionRationale(permissions[0]) // neverAskAgain == true when user denied with never ask again
+                if (neverAskAgain && !neverAskAgainClicked2) { // user previously did not clicked neverAskAgain
+                    neverAskAgainClicked2 = true
+                } else if (neverAskAgain && neverAskAgainClicked2) { // user has previously denied with never ask again
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri: Uri = Uri.fromParts("package", getPackageName(), null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+                switch2.setChecked(false)
+            }
+        } else if (requestCode == BACKGROUND_LOCATION_PERMISSIONS_CODE) {
+            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Log.d(MainActivity.TAG, "Permission denied")
+                val neverAskAgain = !shouldShowRequestPermissionRationale(permissions[0]) // neverAskAgain == true when user denied with never ask again
+                if (neverAskAgain && !neverAskAgainClicked3) { // user previously did not clicked neverAskAgain
+                    neverAskAgainClicked3 = true
+                } else if (neverAskAgain && neverAskAgainClicked3) { // user has previously denied with never ask again
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri: Uri = Uri.fromParts("package", getPackageName(), null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+                switch3.setChecked(false)
+            }
+        }
+    }
+
+
+
+
 
 
 }

@@ -1,16 +1,18 @@
 package si.uni_lj.fri.pbd.sensecontext.ui
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import si.uni_lj.fri.pbd.sensecontext.*
 import si.uni_lj.fri.pbd.sensecontext.Adapters.OnboardingViewPagerAdapter
-import si.uni_lj.fri.pbd.sensecontext.HandlePermissions
-import si.uni_lj.fri.pbd.sensecontext.MainActivity
-import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityMainBinding
 import si.uni_lj.fri.pbd.sensecontext.databinding.ActivityOnboardingBinding
 
@@ -19,14 +21,17 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding
     private lateinit var mViewPager: ViewPager2
     private lateinit var btnNextStep: TextView
+    private var request_permissions: Boolean = false
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         mViewPager = binding.viewPager
         btnNextStep = binding.next
-
+        request_permissions = intent.getBooleanExtra("request_permissions", false)
 
         mViewPager.adapter = OnboardingViewPagerAdapter(this, this)
 
@@ -47,9 +52,13 @@ class OnboardingActivity : AppCompatActivity() {
             val child_count = mViewPager.childCount
             val cur_item = mViewPager.currentItem
             if (getItem() > 5) {
-                finish()
-                val intent = Intent(applicationContext, HandlePermissions::class.java)
-                startActivity(intent)
+                if (request_permissions) {
+                    HandlePermissions.setActivityAndContext(this, this)
+                    HandlePermissions.requestPermissionForTransitionRecognition()
+                } else {
+                    finish()
+                }
+
             } else {
                 mViewPager.setCurrentItem(getItem() + 1, true)
             }
@@ -60,6 +69,30 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun getItem(): Int {
         return mViewPager.currentItem
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_ID_ACTIVITY_PERMISSIONS) {
+            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Log.d(MainActivity.TAG, "Permission denied")
+                finish()
+            } else {
+                Log.d(MainActivity.TAG, "Permission granted")
+                TrackingHelper.requestActivityTransitionUpdates(this)
+                HandlePermissions.requestPermissionForFineLocation()
+            }
+        } else if (requestCode == LOCATION_PERMISSION_CODE) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                HandlePermissions.requestPermissionForBackgroundLocation()
+            } else {
+                finish()
+            }
+        } else if (requestCode == BACKGROUND_LOCATION_PERMISSIONS_CODE) {
+            finish()
+        }
     }
 
 

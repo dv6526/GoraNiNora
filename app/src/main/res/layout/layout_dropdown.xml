@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/corner_radius"
         android:layout_marginHorizontal="10sp"
-        android:layout_marginVertical="5sp"
+        android:layout_marginVertical="6sp"
         android:paddingHorizontal="20sp"
         android:paddingVertical="20sp"
         android:translationZ="8dp">

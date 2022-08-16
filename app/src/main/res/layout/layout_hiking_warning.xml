@@ -9,11 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/card"
         android:background="@drawable/corner_radius"
+        app:cardCornerRadius="20dp"
         android:backgroundTint="@color/red"
         android:translationZ="8dp"
         android:layout_marginHorizontal="10sp"
-        android:layout_marginVertical="5sp"
-        app:cardCornerRadius="10dp">
+        android:layout_marginVertical="6sp"
+        android:paddingHorizontal="20sp"
+        android:paddingVertical="20sp">
 
         <TextView
             android:layout_width="match_parent"
