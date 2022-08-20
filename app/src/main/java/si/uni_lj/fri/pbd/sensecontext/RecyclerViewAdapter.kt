@@ -2,6 +2,7 @@ package si.uni_lj.fri.pbd.sensecontext
 
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -131,6 +132,10 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
 
             }
             3 -> {
+                val holder3: ViewHolderLegend = holder as ViewHolderLegend
+                holder3.close_x.setOnClickListener {
+                    holder3.card.visibility = View.GONE
+                }
 
             }
             else -> {
@@ -206,7 +211,8 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
     }
 
     class ViewHolderLegend(itemView: View): RecyclerView.ViewHolder(itemView) {
-
+        val close_x: ImageView = itemView.findViewById(R.id.close)
+        val card: CardView = itemView.findViewById(R.id.legend_card)
     }
 
     fun filterData(items: List<MatchedRule>): List<MatchedRule> {

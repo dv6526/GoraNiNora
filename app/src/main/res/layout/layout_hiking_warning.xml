@@ -10,7 +10,7 @@
         android:id="@+id/card"
         android:background="@drawable/corner_radius"
         app:cardCornerRadius="20dp"
-        android:backgroundTint="@color/red"
+        android:backgroundTint="@color/green"
         android:translationZ="8dp"
         android:layout_marginHorizontal="10sp"
         android:layout_marginVertical="6sp"
