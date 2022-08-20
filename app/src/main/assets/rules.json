@@ -1,141 +1,311 @@
 {"rules":[
   {
-    "aspect": "N,NE,E,SE,S,SW,W,N",
-    "min_slope": -10,
-    "max_slope": 10,
-    "elevation_min": null,
-    "elevation_max": null,
-    "user_hiking": true,
-    "av_area_id": 2,
-    "notification_name": "notification_name",
-    "notification_text": "notification_text",
-    "weather_descriptions": [
-      {
-        "day_delay": 0,
-        "temp_avg_min": 16,
-        "temp_avg_max": 19,
-        "hour_min": 8,
-        "hour_max": 11,
-        "oblacnost": "clear",
-        "vremenski_pojav": null,
-        "intenzivnost": null,
-        "elevation": "1000",
-        "av_area_id": 2
-
-      }
-    ],
-    "problems": [
-      {
-        "problem_id": 1,
-        "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "check_elevation": true,
-        "av_area_id": 3
-      }
-    ],
-    "patterns":[
-      {
-        "pattern_id": 2,
-        "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "av_area_id": 2
-      }
-    ],
-    "dangers": [
-      {
-        "value": 2,
-        "day_delay": -1,
-        "hour_min": 8,
-        "hour_max": 12,
-        "check_elevation": true,
-        "av_area_id": 2
-      },
-      {
-        "value": 3,
-        "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "check_elevation": true,
-        "av_area_id": 2
-      }
-    ]
-  },
-  {
     "aspect": "S",
     "min_slope": 30.0,
     "max_slope": 45.0,
-    "elevation_min": null,
-    "elevation_max": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": 8,
+    "hour_max": 14,
     "user_hiking": true,
-    "av_area_id": 2,
-    "notification_name": "notification_name2",
-    "notification_text": "notification_text2",
+    "av_area_id": null,
+    "notification_name": "TALJENJE SNEGA",
+    "notification_text": " Nahajate se na strmem južnem pobočju, temperature so visoke in ura je popoldan. Zaradi taljenja snega se nahajate na morebitno plazovitem območju.",
     "weather_descriptions": [
       {
         "day_delay": 0,
-        "temp_avg_min": 10.0,
-        "temp_avg_max": 15.0,
+        "temp_avg_min": 5,
+        "temp_avg_max": 15,
         "hour_min": 8,
-        "hour_max": 12,
+        "hour_max": 14,
         "oblacnost": null,
         "vremenski_pojav": null,
         "intenzivnost": null,
-        "elevation": "1000",
-        "av_area_id": 2
+        "elevation": "1500"
+      }
+    ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": "N",
+    "min_slope": 30.0,
+    "max_slope": 45.0,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "PRISOJNO POBOČJE",
+    "notification_text": "Nahajate se v senčni legi, kjer je zaradi nizkih temperatur snežna odeja manj stabilna. Sneg tam najdlje ostane suh in se počasneje preobraža.  Že ob manjši obremenitvi lahko sprožite\nkložasti plaz suhega snega. Največ nesreč se zgodi severnih pobočjih. ",
+    "weather_descriptions": [
+      {
+        "day_delay": 0,
+        "temp_avg_min": 5,
+        "temp_avg_max": 15,
+        "hour_min": 8,
+        "hour_max": 14,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1500"
+      }
+    ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": 30.0,
+    "max_slope": 45.0,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "STRMO POBOČJE",
+    "notification_text": "Nahajate se na morebitno plazovitem območju, saj se ravno na strmini med 30° in 45° sproži največ plazov.",
+    "weather_descriptions": [
+      {
+        "day_delay": 0,
+        "temp_avg_min": 5,
+        "temp_avg_max": 15,
+        "hour_min": 8,
+        "hour_max": 14,
+        "oblacnost": null,
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1500"
+      }
+    ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "NEVARNOST ZDRSA",
+    "notification_text": "Včeraj so bile visoke temperature in sončno vreme, zato se je čez dan sneg ojužil, ponoči pa nizke temperature in je sneg pomrznil, zato je povečana nevarnost zdrsa.",
+    "weather_descriptions": [
+      {
+        "day_delay": -1,
+        "temp_avg_min": 5,
+        "temp_avg_max": 10,
+        "hour_min": 8,
+        "hour_max": 17,
+        "oblacnost": "clear",
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1500"
       },
       {
         "day_delay": 0,
-        "temp_avg_min": null,
-        "temp_avg_max": null,
-        "hour_min": 8,
-        "hour_max": 12,
+        "temp_avg_min": -10,
+        "temp_avg_max": -5,
+        "hour_min": 0,
+        "hour_max": 8,
         "oblacnost": null,
         "vremenski_pojav": null,
         "intenzivnost": null,
-        "elevation": "1000",
-        "av_area_id": 2
+        "elevation": "1500"
       }
     ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "ŠIBKE PLASTI",
+    "notification_text": "Plazovni problem je povezan s prisotnostjo šibkih plasti v stari snežni odeji. Plaz se sproži zaradi preobremenitve nosilnosti šibke plasti. Ključnega pomena je spremljanje plazovnega biltena in drugih informacij o stanju in preobrazbi snežne odeje.",
+    "weather_descriptions": [],
+    "problems": [
+      { "check_elevation": true,
+        "day_delay": 0,
+        "hour_max": 0,
+        "hour_min": 23,
+        "problem_id": 4
+      }
+    ],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+      "notification_name": "POLZEČI SNEG",
+    "notification_text": "Možno je drsenje celotne snežne odeje od vrha do tal na gladki podlagi, kot so travnata in gladka skalnata pobočja. Ponavadi se pred zdrsom pokaže zdrsna razpoka, vendar se plazovi lahko vseeno prožijo brez vidnih razpok.",
+    "weather_descriptions": [],
+    "problems": [
+      { "check_elevation": true,
+        "day_delay": 0,
+        "hour_max": 0,
+        "hour_min": 23,
+        "problem_id": 5
+      }
+    ],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "NOV SNEG",
+    "notification_text": "Plazovni problem je nov sneg. Med sneženjem in tudi po njem novi sneg predstavlja dodatno obremenitev na snežno podlago. Kako kritična je ta obremenitev, je odvisno od številnih dejavnikov, kot so temperatura in značilnosti stare snežne odeje. Bodite pozorni na spremembe v vlažnosti zraka, ki lahko bistveno vplivajo na stanje novega snega. ",
+    "weather_descriptions": [],
     "problems": [
       {
-        "problem_id": 1,
-        "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "aspect": true,
         "check_elevation": true,
-        "av_area_id": 3
+        "day_delay": 0,
+        "hour_max": 0,
+        "hour_min": 23,
+        "problem_id": 2
       }
     ],
-    "patterns":[
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "MOKER SNEG",
+    "notification_text": "Plazovni problem se pojavi zaradi vode, ki pronica v snežno odejo in oslabi povezavo med plastmi. Predhodni znaki so začetek dežnih padavin, valjenje snežnih kep na pobočjih, globoko udiranje v snežno odejo in manjši plazovi mokrega snega. Treba je biti pazljiv na območju zaustavljanja plazov.",
+    "weather_descriptions": [],
+    "problems": [
       {
-        "pattern_id": 2,
+        "check_elevation": true,
         "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "av_area_id": 2
+        "hour_max": 0,
+        "hour_min": 23,
+        "problem_id": 3
       }
     ],
-    "dangers": [
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": true,
+    "av_area_id": null,
+    "notification_name": "NAPIHAN SNEG",
+    "notification_text": "lazovni problem je napihan sneg, zaradi katerega so lahko nastali zameti in klože.  Napihan sneg predstavlja dodatno obremenitev šibkih plasti, ki se nahaja na stiku med napihanim snegom in staro snežno podlago. Ker je praviloma bolj zbit, ob zrušitvi nastane razpoka, ki se značilno razširi čez cel zamet (kložo). Sneg se odlaga na zavetrni strani za grebeni, v grapah in vrtačah. ",
+    "weather_descriptions": [],
+    "problems": [
       {
-        "value": 2,
-        "day_delay": -1,
-        "hour_min": 8,
-        "hour_max": 12,
         "check_elevation": true,
-        "av_area_id": 2
-      },
-      {
-        "value": 3,
         "day_delay": 0,
-        "hour_min": 8,
-        "hour_max": 12,
-        "check_elevation": true,
-        "av_area_id": 2
+        "hour_max": 0,
+        "hour_min": 23,
+        "problem_id": 2
       }
-    ]
+    ],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": false,
+    "av_area_id": null,
+    "notification_name": "TALJENJE SNEGA",
+    "notification_text": "Jutri je napovedano sončno vreme in visoke temperature. Zaradi taljenja snega je dopoldne primernejši čas za obisk gora. ",
+    "weather_descriptions": [
+      {
+        "day_delay": 1,
+        "temp_avg_min": 5,
+        "temp_avg_max": 15,
+        "hour_min": 8,
+        "hour_max": 15,
+        "oblacnost": "clear",
+        "vremenski_pojav": null,
+        "intenzivnost": null,
+        "elevation": "1500"
+      }
+    ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
+  },
+  {
+    "aspect": null,
+    "min_slope": null,
+    "max_slope": null,
+    "elevation_min": 1000,
+    "elevation_max": 3000,
+    "hour_min": null,
+    "hour_max": null,
+    "user_hiking": false,
+    "av_area_id": 2,
+    "notification_name": "TALJENJE SNEGA",
+    "notification_text": "Jutri je napovedano sončno vreme in visoke temperature. Zaradi taljenja snega je dopoldne primernejši čas za obisk gora. ",
+    "weather_descriptions": [
+      {
+        "day_delay": 1,
+        "temp_avg_min": null,
+        "temp_avg_max": null,
+        "hour_min": 0,
+        "hour_max": 24,
+        "oblacnost": null,
+        "vremenski_pojav": "RA",
+        "intenzivnost": null,
+        "elevation": "1500"
+      }
+    ],
+    "problems": [],
+    "patterns":[],
+    "dangers": []
   },
   {
     "aspect": null,
@@ -143,13 +313,27 @@
     "max_slope": null,
     "elevation_min": null,
     "elevation_max": null,
+    "hour_min": null,
+    "hour_max": null,
     "user_hiking": false,
     "av_area_id": 2,
-    "notification_name": "notification_name",
-    "notification_text": "notification_text",
-    "weather_descriptions": [],
+    "notification_name": "SNEŽENJE",
+    "notification_text": "Jutri je napovedano sneženje.  Priporočamo da z obiskom gora počakate par dni, da se sneg preobrazi. Največ plazov se proži ravno v prvih 2 dneh po sneženju.",
+    "weather_descriptions": [
+      {
+        "day_delay": 1,
+        "temp_avg_min": null,
+        "temp_avg_max": null,
+        "hour_min": 0,
+        "hour_max": 24,
+        "oblacnost": null,
+        "vremenski_pojav": "SN",
+        "intenzivnost": null,
+        "elevation": "1500"
+      }
+    ],
     "problems": [],
-    "patterns": [],
+    "patterns":[],
     "dangers": []
   }
 ]

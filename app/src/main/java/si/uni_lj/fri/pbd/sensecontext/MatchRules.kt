@@ -47,7 +47,7 @@ class MatchRules {
                 val aspects = rule.rule.aspect
                 if (!user_hiking)
                     area_id = rule.rule.av_area_id //all problem, patterns, dangers, weather for this area_id
-                if (aspects != null && loc.aspect != null) {
+                if (aspects != null && user_hiking && loc.aspect != null) {
                     for (aspect in aspects.split(",")) {
                         when (aspect) {
                             "N" -> {
@@ -62,27 +62,51 @@ class MatchRules {
                                 else
                                     rule_is_match = false
                             }
+                            "W" -> {
+                                if (loc.aspect in 180.0..360.0)
+                                   break
+                                else
+                                    rule_is_match = false
+                            }
+                            "E" -> {
+                                if (loc.aspect in 0.0..180.0)
+                                    break
+                                else
+                                    rule_is_match = false
+                            }
                         }
                     }
                 }
 
                 val min_slope = rule.rule.min_slope
-                if (min_slope != null && loc.slope != null  && loc.slope < min_slope) {
+                if (min_slope != null && user_hiking && loc.slope != null  && loc.slope < min_slope) {
                     rule_is_match = false
                 }
 
                 val max_slope = rule.rule.max_slope
-                if (max_slope != null && loc.slope != null && loc.slope > max_slope) {
+                if (max_slope != null && user_hiking && loc.slope != null && loc.slope > max_slope) {
                     rule_is_match = false
                 }
 
                 val elevation_min = rule.rule.elevation_min
-                if (elevation_min != null && loc.elevation < elevation_min) {
+                if (elevation_min != null && user_hiking && loc.elevation != null && loc.elevation < elevation_min) {
                     rule_is_match = false
                 }
 
                 val elevation_max = rule.rule.elevation_max
-                if (elevation_max != null && loc.elevation > elevation_max) {
+                if (elevation_max != null && user_hiking && loc.elevation != null && loc.elevation > elevation_max) {
+                    rule_is_match = false
+                }
+
+                val cal = Calendar.getInstance()
+                val hour = cal.get(Calendar.HOUR_OF_DAY)
+                val hour_min = rule.rule.hour_min
+                if (hour_min != null && hour < hour_min) {
+                    rule_is_match = false
+                }
+
+                val hour_max = rule.rule.hour_max
+                if (hour_max != null && hour > hour_max) {
                     rule_is_match = false
                 }
 

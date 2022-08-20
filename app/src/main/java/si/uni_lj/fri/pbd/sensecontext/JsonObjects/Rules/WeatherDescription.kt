@@ -1,7 +1,6 @@
 package si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules
 
 data class WeatherDescription(
-    var av_area_id: Int,
     val day_delay: Int, // -1 -> prejsni dan, 0 -> danes, 1 -> jutri
     val temp_avg_min: Double?,// min povprečna temperatura
     val temp_avg_max: Double?, // max povprečna temperatura

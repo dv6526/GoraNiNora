@@ -210,10 +210,10 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             val rules = Gson().fromJson(jsonString, Rules::class.java)
 
             for (rule in rules.rules) {
-                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.user_hiking, rule.av_area_id, rule.notification_name, rule.notification_text))
+                val rule1 = repository.addRule(Rule(0L, rule.aspect, rule.min_slope, rule.max_slope, rule.elevation_min, rule.elevation_max, rule.hour_min, rule.hour_max, rule.user_hiking, rule.av_area_id, rule.notification_name, rule.notification_text))
                 for (wd in rule.weather_descriptions) {
                     repository.addWeatherDescription(
-                        WeatherDescription(0L, rule1, wd!!.av_area_id, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
+                        WeatherDescription(0L, rule1, wd!!.day_delay, wd.temp_avg_min, wd.temp_avg_max, wd.hour_min,
                         wd.hour_max, wd.oblacnost, wd.vremenski_pojav, wd.intenzivnost, wd.elevation
                     )
                     )
