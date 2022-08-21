@@ -51,6 +51,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             return PendingIntent.getBroadcast(context, 0, intent, 0)
         }
     }
+
     val processingScope = CoroutineScope(Dispatchers.IO)
     val timeBetweenUpdates = LocationUpdatesService.locationUpdatesInterval // if seconds elapsed since last location, we call API
 

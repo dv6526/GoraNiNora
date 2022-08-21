@@ -17,6 +17,7 @@ import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.RecyclerViewAdapter
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
+import si.uni_lj.fri.pbd.sensecontext.TrackingHelper
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
 import si.uni_lj.fri.pbd.sensecontext.databinding.FragmentWarningsBinding.inflate
@@ -76,20 +77,8 @@ class WarningsFragment : Fragment() {
     }
 
 
-    var activityCallback: FragmentCallback? = null
-
-    interface FragmentCallback {
-        fun stopActivityTransitionUpdates()
-        fun startActivityTransitionUpdates()
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try{
-            activityCallback = context as FragmentCallback
-        } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement ToolbarListener")
-        }
         val db = ApplicationDatabase.getDatabase(context)
         val dao = db.dao()
         repository = Repository(dao)
@@ -98,7 +87,7 @@ class WarningsFragment : Fragment() {
 
 
     fun startLocationUpdates() {
-        activityCallback?.stopActivityTransitionUpdates()
+        TrackingHelper.removeActivityTransitionUpdates(requireActivity())
         LocationUpdatesService.user_is_hiking = true
         repository.user_hiking.value = true
         if (!LocationUpdatesService.IS_RUNNING) {
@@ -118,7 +107,7 @@ class WarningsFragment : Fragment() {
     }
 
     fun stopLocationUpdates() {
-        activityCallback?.startActivityTransitionUpdates()
+        TrackingHelper.requestActivityTransitionUpdates(requireContext())
         LocationUpdatesService.user_is_hiking = false
         repository.user_hiking.value = false
         if (LocationUpdatesService.IS_RUNNING) {

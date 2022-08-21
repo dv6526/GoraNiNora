@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import si.uni_lj.fri.pbd.sensecontext.ForegroundService
+import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesReceiver
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
@@ -33,7 +33,6 @@ class LocationUpdatesService : Service() {
 
         var IS_RUNNING: Boolean = false // if service is running
         const val NOTIFICATION_ID = 12
-        private const val CHANNEL_ID: String = "Sensor Data"
         var locationUpdatesInterval: Long = 0
         var user_is_hiking = false // when LocationUpdatesReceiver determines user is hiking based on GPS coordinates, user_is_hiking is set to TRUE
         var av_area_id: Int? = null
@@ -85,7 +84,6 @@ class LocationUpdatesService : Service() {
         val db = ApplicationDatabase.getDatabase(applicationContext)
         val dao = db.dao()
         repository = Repository(dao)
-        createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
         startLocationUpdates(this)
         IS_RUNNING = true
@@ -102,28 +100,15 @@ class LocationUpdatesService : Service() {
     }
 
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel
-            val name = getString(R.string.channel_name)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        }
-    }
 
     private fun createNotification(): Notification {
         val i = Intent(applicationContext, LocationUpdatesService::class.java)
         i.action = LocationUpdatesService.ACTION_STOP_FOR_1H
         val pendingIntent = PendingIntent.getService(applicationContext, 0, i, 0)
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID_WARNING)
             .setContentTitle("GoraNiNora uporablja lokacijo GPS")
             .setContentText("Ugotavlja, če se nahajate v hribih.")
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setChannelId(CHANNEL_ID)
             .addAction(R.drawable.ic_opozorila, "IZKLOPI LOKACIJO ZA 1h",pendingIntent)
 
         return builder.build()
@@ -134,7 +119,7 @@ class LocationUpdatesService : Service() {
         stopForeground(true)
         // Stop the foreground service.
         stopSelf()
-        ForegroundService.IS_RUNNING = false
+        IS_RUNNING = false
     }
 
     fun startLocationUpdates(context: Context) {

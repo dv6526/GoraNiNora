@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
-import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.Weather.AvalancheBulletinWorker
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
@@ -42,15 +41,13 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
+class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MainActivity1"
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
         const val CHANNEL_ID_WARNING = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_WARNING"
         const val CHANNEL_ID_NOTIFY = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_NOTIFY"
         const val CHANNEL_ID_ACTIVITY_TRANSITION = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_ACTIVITY_TRANSITION"
-
-        var deniedPermission = true
 
     }
 
@@ -110,20 +107,15 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         processingScope.launch { prepopulateDatabaseWithRules() }
     }
 
+
+
     override fun onStart() {
         super.onStart()
         setWeatherUpdatesTest()
-        startActivityTransitionUpdates()
+        TrackingHelper.requestActivityTransitionUpdates(this)
         MatchRules.matchRules(this, false)
     }
 
-    override fun stopActivityTransitionUpdates() {
-        TrackingHelper.removeActivityTransitionUpdates(this)
-    }
-
-    override fun startActivityTransitionUpdates() {
-        TrackingHelper.requestActivityTransitionUpdates(this)
-    }
 
 
 
@@ -157,9 +149,15 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         supportFragmentManager.beginTransaction().replace(binding.frame.id, fragment).commit()
     }
 
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putInt("SelectedItemId", binding.bottomNavigationView.getSelectedItemId())
+    }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val selectedItemId = savedInstanceState.getInt("SelectedItemId")
+        binding.bottomNavigationView.setSelectedItemId(selectedItemId)
     }
 
     fun createNotificationChannel1() {
