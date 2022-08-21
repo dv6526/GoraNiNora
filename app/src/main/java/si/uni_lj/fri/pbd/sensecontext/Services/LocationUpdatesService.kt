@@ -1,24 +1,31 @@
 package si.uni_lj.fri.pbd.sensecontext.Services
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.IBinder
+import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService
+import si.uni_lj.fri.pbd.sensecontext.HandlePermissions
+import si.uni_lj.fri.pbd.sensecontext.HandlePermissions.Companion.context
 import si.uni_lj.fri.pbd.sensecontext.R
+import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesReceiver
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class LocationUpdatesService : Service() {
@@ -26,7 +33,10 @@ class LocationUpdatesService : Service() {
     companion object {
         const val STOP_BACKGROUND_SENSING = "si.uni_lj.fri.pbd.sensecontext.Services.ActivitySamplingService.stop_background_service"
         const val ACTION_STOP = "action_stop"
-        const val ACTION_START = "action_start"
+        const val ACTION_STOP_FOR_1H = "action_stop_hour"
+        const val ACTION_START_BUTTON = "action_start_button"
+        const val ACTION_START_RECEIVER = "action_start_receiver"
+
         var IS_RUNNING: Boolean = false // if service is running
         const val NOTIFICATION_ID = 12
         private const val CHANNEL_ID: String = "Sensor Data"
@@ -45,11 +55,29 @@ class LocationUpdatesService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-
+        val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (intent.action.equals(ACTION_STOP)) {
             stopService()
-        } else if (intent.action.equals(ACTION_START)) {
+        } else if (intent.action.equals(ACTION_START_BUTTON)) {
             locationUpdatesInterval = intent?.getSerializableExtra("locationUpdatesInterval") as Long
+        } else if (intent.action.equals(ACTION_START_RECEIVER)) {
+            val time1 = Date(sp.getLong("last_stopped", 0)).time
+            val time2 = Date().time
+            val diff = time2 - time1
+            if ( TimeUnit.MILLISECONDS.toHours(diff) < 1) {
+                stopService()
+            } else {
+                locationUpdatesInterval = intent?.getSerializableExtra("locationUpdatesInterval") as Long
+            }
+        } else if (intent.action.equals(ACTION_STOP_FOR_1H)) {
+
+            val time2 = Date().time
+            with (sp.edit()) {
+                putLong("last_stopped", time2)
+                apply()
+            }
+            stopService()
+
         }
         return START_NOT_STICKY
     }
@@ -81,7 +109,7 @@ class LocationUpdatesService : Service() {
             // Create the NotificationChannel
             val name = getString(R.string.channel_name)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(ForegroundService.CHANNEL_ID, name, importance)
+            val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -90,12 +118,15 @@ class LocationUpdatesService : Service() {
     }
 
     private fun createNotification(): Notification {
-
-        val builder = NotificationCompat.Builder(this, ForegroundService.CHANNEL_ID)
-            .setContentTitle("Sampling API running")
-            .setContentText("running in foreground")
+        val i = Intent(applicationContext, LocationUpdatesService::class.java)
+        i.action = LocationUpdatesService.ACTION_STOP_FOR_1H
+        val pendingIntent = PendingIntent.getService(applicationContext, 0, i, 0)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("GoraNiNora uporablja lokacijo GPS")
+            .setContentText("Ugotavlja, če se nahajate v hribih.")
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setChannelId(ForegroundService.CHANNEL_ID)
+            .setChannelId(CHANNEL_ID)
+            .addAction(R.drawable.ic_opozorila, "IZKLOPI LOKACIJO ZA 1h",pendingIntent)
 
         return builder.build()
     }

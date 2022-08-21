@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
+import si.uni_lj.fri.pbd.sensecontext.HandlePermissions
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Areas.Areas
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.CHANNEL_ID_WARNING
 import si.uni_lj.fri.pbd.sensecontext.MainActivity.Companion.TAG
@@ -85,6 +86,8 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                         else {
                             MatchRules.matchRules(context, true)
                         }
+                    } else if (!isInsideArea) {
+
                     }
                     prevDate = curDate
                 }
@@ -282,6 +285,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(warningTitle:String, warningText: String, context: Context) {
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID_WARNING).setSmallIcon(
             R.drawable.ic_launcher_foreground).setContentTitle(warningTitle).setContentText(warningText)
         with(NotificationManagerCompat.from(context)) {

@@ -80,8 +80,6 @@ class SettingsFragment : Fragment() {
         if (HandlePermissions.isPermissionTransitionRecognitionGranted()) {
             switch1.setChecked(true)
             switch1.setClickable(false)
-        } else {
-            neverAskAgainClicked1 = !shouldShowRequestPermissionRationale(Manifest.permission.ACTIVITY_RECOGNITION)
         }
 
         switch1.setOnCheckedChangeListener { _, isChecked ->
@@ -95,8 +93,6 @@ class SettingsFragment : Fragment() {
         if (HandlePermissions.isPermissionForFineLocationGranted()) {
             switch2.setChecked(true)
             switch2.setClickable(false)
-        } else {
-            neverAskAgainClicked2 = !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
         switch2.setOnCheckedChangeListener { _, isChecked ->
@@ -110,8 +106,6 @@ class SettingsFragment : Fragment() {
         if (HandlePermissions.isPermissionForBackgroundLocationGranted()) {
             switch3.setChecked(true)
             switch3.setClickable(false)
-        } else {
-            neverAskAgainClicked3 = !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
 
         switch3.setOnCheckedChangeListener { _, isChecked ->

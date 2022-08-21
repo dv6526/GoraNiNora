@@ -19,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import si.uni_lj.fri.pbd.sensecontext.JsonObjects.Rules.Rules
+import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.Weather.AvalancheBulletinWorker
 import si.uni_lj.fri.pbd.sensecontext.Weather.WeatherWorker
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
@@ -47,6 +48,8 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
         const val TRANSITION_RECEIVER_ACTION = "si.uni_lj.fri.pbd.sensecontext.RESULT_RECEIVE"
         const val CHANNEL_ID_WARNING = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_WARNING"
         const val CHANNEL_ID_NOTIFY = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_NOTIFY"
+        const val CHANNEL_ID_ACTIVITY_TRANSITION = "si.uni_lj.fri.pbd.sensecontext.CHANNEL_ID_ACTIVITY_TRANSITION"
+
         var deniedPermission = true
 
     }
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
 
         createNotificationChannel1()
         createNotificationChannel2()
+        createNotificationChannel3()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -183,6 +187,23 @@ class MainActivity : AppCompatActivity(), WarningsFragment.FragmentCallback {
             val descriptionText = applicationContext.resources.getString(R.string.channel_description_notification)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID_NOTIFY, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotificationChannel3() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = applicationContext.resources.getString(R.string.channel_name)
+            val descriptionText = applicationContext.resources.getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID_ACTIVITY_TRANSITION, name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system

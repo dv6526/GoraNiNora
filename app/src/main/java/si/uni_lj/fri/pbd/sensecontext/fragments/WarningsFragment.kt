@@ -106,7 +106,7 @@ class WarningsFragment : Fragment() {
             i.putExtra("locationUpdatesInterval",
                 DetectedTransitionReceiver.locationUpdatesInterval
             )
-            i.action = LocationUpdatesService.ACTION_START
+            i.action = LocationUpdatesService.ACTION_START_BUTTON
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 requireActivity().applicationContext.startForegroundService(i)
