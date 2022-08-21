@@ -1,8 +1,9 @@
 package si.uni_lj.fri.pbd.sensecontext.fragments
 
-import android.Manifest
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,19 +42,9 @@ class SettingsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        setupSwitchState()
         //preveri, če je dovoljenje že grantano
-        if (HandlePermissions.isPermissionTransitionRecognitionGranted()) {
-            switch1.setChecked(true)
-            switch1.setClickable(false)
-        }
-        if (HandlePermissions.isPermissionForFineLocationGranted()) {
-            switch2.setChecked(true)
-            switch2.setClickable(false)
-        }
-        if (HandlePermissions.isPermissionForBackgroundLocationGranted()) {
-            switch3.setChecked(true)
-            switch3.setClickable(false)
-        }
+
     }
 
     override fun onPause() {
@@ -70,16 +61,46 @@ class SettingsFragment : Fragment() {
         switch2 = binding.switch2
         switch3 = binding.switch3
 
-        setup_switch_permissions()
+        setupSwitchState()
+        setupSwitchOnClick()
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun setup_switch_permissions() {
-        //preveri, če je dovoljenje že grantano
+    fun setupSwitchState() {
+        val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        if (sp.getBoolean("power_saving", false)) {
+            switch0.setChecked(true)
+        }
+
         if (HandlePermissions.isPermissionTransitionRecognitionGranted()) {
             switch1.setChecked(true)
             switch1.setClickable(false)
+        }
+        if (HandlePermissions.isPermissionForFineLocationGranted()) {
+            switch2.setChecked(true)
+            switch2.setClickable(false)
+        }
+        if (HandlePermissions.isPermissionForBackgroundLocationGranted()) {
+            switch3.setChecked(true)
+            switch3.setClickable(false)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun setupSwitchOnClick() {
+        val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        switch0.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                with (sp.edit()) {
+                    putBoolean("power_saving", true)
+                    apply()
+                }
+            } else {
+                with (sp.edit()) {
+                    putBoolean("power_saving", false)
+                    apply()
+                }
+            }
         }
 
         switch1.setOnCheckedChangeListener { _, isChecked ->
@@ -88,24 +109,10 @@ class SettingsFragment : Fragment() {
             }
         }
 
-
-        //preveri, če je dovoljenje že grantano
-        if (HandlePermissions.isPermissionForFineLocationGranted()) {
-            switch2.setChecked(true)
-            switch2.setClickable(false)
-        }
-
         switch2.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 HandlePermissions.requestPermissionForFineLocation()
             }
-        }
-
-
-        //preveri, če je dovoljenje že grantano
-        if (HandlePermissions.isPermissionForBackgroundLocationGranted()) {
-            switch3.setChecked(true)
-            switch3.setClickable(false)
         }
 
         switch3.setOnCheckedChangeListener { _, isChecked ->

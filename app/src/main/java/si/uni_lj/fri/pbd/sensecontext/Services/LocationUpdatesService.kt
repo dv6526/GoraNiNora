@@ -3,25 +3,19 @@ package si.uni_lj.fri.pbd.sensecontext.Services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
 import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import si.uni_lj.fri.pbd.sensecontext.ForegroundService
-import si.uni_lj.fri.pbd.sensecontext.HandlePermissions
-import si.uni_lj.fri.pbd.sensecontext.HandlePermissions.Companion.context
 import si.uni_lj.fri.pbd.sensecontext.R
-import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
 import si.uni_lj.fri.pbd.sensecontext.Receivers.LocationUpdatesReceiver
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
 import si.uni_lj.fri.pbd.sensecontext.data.Repository
@@ -56,7 +50,11 @@ class LocationUpdatesService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (intent.action.equals(ACTION_STOP)) {
+        val bm = applicationContext.getSystemService(BATTERY_SERVICE) as BatteryManager
+        // Get the battery percentage and store it in a INT variable
+        val batLevel = getBatteryPercentage(this)
+        val power_saving = sp.getBoolean("power_saving", false)
+        if (intent.action.equals(ACTION_STOP) || (power_saving && batLevel < 20)) {
             stopService()
         } else if (intent.action.equals(ACTION_START_BUTTON)) {
             locationUpdatesInterval = intent?.getSerializableExtra("locationUpdatesInterval") as Long
@@ -64,7 +62,7 @@ class LocationUpdatesService : Service() {
             val time1 = Date(sp.getLong("last_stopped", 0)).time
             val time2 = Date().time
             val diff = time2 - time1
-            if ( TimeUnit.MILLISECONDS.toHours(diff) < 1) {
+            if ( TimeUnit.MILLISECONDS.toMinutes(diff) < 1) {
                 stopService()
             } else {
                 locationUpdatesInterval = intent?.getSerializableExtra("locationUpdatesInterval") as Long
@@ -165,6 +163,23 @@ class LocationUpdatesService : Service() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.removeLocationUpdates(LocationUpdatesReceiver.getLocationPendingIntent(context))
 
+    }
+
+    fun getBatteryPercentage(context: Context): Int {
+        return if (Build.VERSION.SDK_INT >= 21) {
+            val bm = context.getSystemService(BATTERY_SERVICE) as BatteryManager
+            bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+
+        } else {
+            val ifilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+            val batteryStatus = registerReceiver(null, ifilter)
+
+            val level = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val scale = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+
+            level / scale.toFloat().toInt()
+
+        }
     }
 
 

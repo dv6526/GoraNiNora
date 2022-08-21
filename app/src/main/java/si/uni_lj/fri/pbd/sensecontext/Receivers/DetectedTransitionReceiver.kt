@@ -2,9 +2,12 @@ package si.uni_lj.fri.pbd.sensecontext.Receivers
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast

@@ -1,14 +1,15 @@
 package si.uni_lj.fri.pbd.sensecontext.Receivers
 
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
+import android.app.Service
+import android.content.*
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -59,6 +60,15 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
             // Checks for location availability changes.
 
             LocationResult.extractResult(intent)?.let { locationResult ->
+                //if battery percantage drops below 20 and battery saving is enabled, stop location updates service
+                val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val power_saving = sp.getBoolean("power_saving", false)
+                if (getBatteryPercentage(context) < 20 && power_saving) {
+                    val i = Intent(context, LocationUpdatesService::class.java)
+                    i.action = LocationUpdatesService.ACTION_STOP
+                    context.startService(i)
+                }
+
                 //only take first location
                 val location = locationResult.locations[0]
                 val curDate = Date(location.time)
@@ -86,9 +96,13 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                         else {
                             MatchRules.matchRules(context, true)
                         }
-                    } else if (!isInsideArea) {
-
+                    } /* else if (!isInsideArea) {
+                        //stop location updates
+                        val i = Intent(context, LocationUpdatesService::class.java)
+                        i.action = LocationUpdatesService.ACTION_STOP
+                        context.startService(i)
                     }
+                    */
                     prevDate = curDate
                 }
 
@@ -317,6 +331,24 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
         }
     }
 
+
+
+    fun getBatteryPercentage(context: Context): Int {
+        return if (Build.VERSION.SDK_INT >= 21) {
+            val bm = context.getSystemService(Service.BATTERY_SERVICE) as BatteryManager
+            bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+
+        } else {
+            val ifilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+            val batteryStatus = context.registerReceiver(null, ifilter)
+
+            val level = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val scale = batteryStatus!!.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+
+            level / scale.toFloat().toInt()
+
+        }
+    }
 
 
 }
