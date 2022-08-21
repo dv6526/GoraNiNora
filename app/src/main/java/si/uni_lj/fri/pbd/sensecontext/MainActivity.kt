@@ -72,9 +72,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.page_1 -> {
                     replaceFragment(HistoryFragment())
                     //sendJobAPI()
+                    /*
                     val intent =
                         Intent(applicationContext, OnboardingActivity::class.java)
                     startActivity(intent)
+
+                     */
 
                     true
                 }

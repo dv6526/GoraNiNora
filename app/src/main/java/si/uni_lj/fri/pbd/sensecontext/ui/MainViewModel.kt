@@ -13,7 +13,7 @@ import java.util.*
 
 class MainViewModel(application: Application?): AndroidViewModel(application!!) {
     var matchedRules: LiveData<List<MatchedRule>>
-    var ruleDetails: MutableLiveData<MatchedRule> = MutableLiveData()
+    var matchedRulesHistory: LiveData<List<MatchedRule>>
     var user_hiking: MutableLiveData<Boolean>? = null
     private val repository: Repository
     init {
@@ -26,6 +26,7 @@ class MainViewModel(application: Application?): AndroidViewModel(application!!) 
         cal1.set(Calendar.SECOND, 0)
         cal1.set(Calendar.MILLISECOND, 0)
         matchedRules = repository.matchedRulesToday(cal1.time)
+        matchedRulesHistory = repository.matchedRulesHistory(cal1.time)
         user_hiking = repository.user_hiking
         repository.user_hiking.value = LocationUpdatesService.user_is_hiking
         //user_hiking?.value = LocationUpdatesService.user_is_hiking

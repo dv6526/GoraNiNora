@@ -1,25 +1,22 @@
-package si.uni_lj.fri.pbd.sensecontext
+package si.uni_lj.fri.pbd.sensecontext.Adapters
 
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.data.rules.MatchedRule
 import si.uni_lj.fri.pbd.sensecontext.fragments.WarningsFragment
 import si.uni_lj.fri.pbd.sensecontext.ui.DetailsActivity
 import si.uni_lj.fri.pbd.sensecontext.ui.MainViewModel
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragment, contextRef: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemsList: List<MatchedRule>? = null
@@ -102,7 +99,8 @@ class RecyclerViewAdapter(mViewModel: MainViewModel, fragmentRef: WarningsFragme
             2 -> {
                 val holder2: ViewHolderDropdown = holder as ViewHolderDropdown
                 var areas = arrayOf("Izberi območje", "Južni in zahodni Julijci", "Osrednji Julijci in zahodne Karavanke", "Kamniško-Savinjske Alpe in V Karavanke")
-                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(context, R.layout.selected_item, areas)
+                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(context,
+                    R.layout.selected_item, areas)
                 adapter.setDropDownViewResource(R.layout.dropdown_item)
                 val sharedPreferences = context.getSharedPreferences("pref", Context.MODE_PRIVATE)
                 selected_position = sharedPreferences.getInt("selected_spinner_position", 0)

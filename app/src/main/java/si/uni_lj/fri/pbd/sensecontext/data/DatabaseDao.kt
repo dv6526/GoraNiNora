@@ -110,6 +110,10 @@ interface DatabaseDao {
     @Transaction
     @Query("UPDATE matched_rule_table SET read=1 WHERE :rule_id=rule_id")
     fun updateMatchedRuleIsRead(rule_id: Long)
+
+    @Transaction
+    @Query("SELECT * FROM matched_rule_table WHERE date <= :date")
+    fun getMatchedRulesOlderThan(date: Date): LiveData<List<MatchedRule>>
 }
 
 

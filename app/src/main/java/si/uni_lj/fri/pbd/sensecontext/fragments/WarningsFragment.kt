@@ -1,9 +1,7 @@
 package si.uni_lj.fri.pbd.sensecontext.fragments
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import si.uni_lj.fri.pbd.sensecontext.R
 import si.uni_lj.fri.pbd.sensecontext.Receivers.DetectedTransitionReceiver
-import si.uni_lj.fri.pbd.sensecontext.RecyclerViewAdapter
+import si.uni_lj.fri.pbd.sensecontext.Adapters.RecyclerViewAdapter
 import si.uni_lj.fri.pbd.sensecontext.Services.LocationUpdatesService
 import si.uni_lj.fri.pbd.sensecontext.TrackingHelper
 import si.uni_lj.fri.pbd.sensecontext.data.ApplicationDatabase
