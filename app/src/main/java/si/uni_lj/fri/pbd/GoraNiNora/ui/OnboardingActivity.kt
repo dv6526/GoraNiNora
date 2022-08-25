@@ -19,6 +19,11 @@ class OnboardingActivity : AppCompatActivity() {
     private lateinit var mViewPager: ViewPager2
     private lateinit var btnNextStep: TextView
     private var request_permissions: Boolean = false
+    var selected: Int = 0
+
+    fun setSelected() {
+
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {

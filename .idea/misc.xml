@@ -3,6 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_group_1.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_group_2.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_nastavitve.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_obs_1.xml" value="0.4585" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_opozorila.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_prebrano.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/drawable/ic_zgodovina.xml" value="0.2995" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/activity_onboarding.xml" value="0.25" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding1.xml" value="0.33" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding2.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding3.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding4.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding5.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding6.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_onboarding7.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/fragment_settings.xml" value="0.5364583333333334" />
+        <entry key="..\:/Users/domen/AndroidStudioProjects/GoraNiNora/app/src/main/res/layout/layout_grid_item.xml" value="0.5364583333333334" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5305" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/corner_radius.xml" value="0.1" />
         <entry key="..\:/Users/domen/AndroidStudioProjects/SenseContext/app/src/main/res/drawable/ic_back.xml" value="0.5305" />

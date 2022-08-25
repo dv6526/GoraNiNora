@@ -6,19 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import si.uni_lj.fri.pbd.GoraNiNora.R
+import si.uni_lj.fri.pbd.GoraNiNora.databinding.FragmentOnboarding1Binding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OnboardingFragment1.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OnboardingFragment1 : Fragment() {
 
+    lateinit var binding: FragmentOnboarding1Binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +22,23 @@ class OnboardingFragment1 : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_onboarding1, container, false)
+        binding = FragmentOnboarding1Binding.inflate(layoutInflater)
+        arguments?.let {
+            val position = it.getInt("position")
+            if (position != null) {
+                when (position) {
+                    0 -> binding.imageExplain.setImageResource(R.drawable.obs1)
+                    1 -> binding.imageExplain.setImageResource(R.drawable.obs2)
+                    2 -> binding.imageExplain.setImageResource(R.drawable.obs3)
+                    3 -> binding.imageExplain.setImageResource(R.drawable.obs4)
+                    4 -> binding.imageExplain.setImageResource(R.drawable.obs5)
+                    5 -> binding.imageExplain.setImageResource(R.drawable.obs6)
+                    6 -> binding.imageExplain.setImageResource(R.drawable.obs7)
+                }
+
+            }
+        }
+        return binding.root
     }
 
 }

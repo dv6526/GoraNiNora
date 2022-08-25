@@ -22,12 +22,36 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="translationz" translatable="false">8dp</string>
-    <string name="text_onboarding_screeen_1">Če radi obiskujete gore pozimi,
-je aplikacija GoraNiNora prava odločitev. S kontekstno odvisnim sporočanjem dobite informacije, takrat ko jih potrebujete. \n \n Informacije so izobraževalne narave, ki pripomorejo k varnejšemu gibanju v zimskem času v gorah.</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="onboarding_screeen_1_header">GoraNiNora</string>
+    <string name="onboarding_screeen_1_text">Če radi obiskujete gore pozimi,je aplikacija <b>GoraNiNora prava odločitev</b>. S kontekstno odvisnim sporočanjem dobite informacije, takrat ko jih potrebujete. \n \n Informacije so izobraževalne narave, ki pripomorejo k varnejšemu gibanju v zimskem času v gorah.</string>
+
+    <string name="onboarding_screeen_2_header"> Trenutno aktualna opozorila</string>
+    <string name="onboarding_screeen_2_text">Ko aplikacija samodejno zazna hojo v hribe vam glede na območje na katerem se nahajate prikaže trenutno aktualna opozorila.</string>
+
+    <string name="onboarding_screeen_3_header">Kako ročno vklopiti trenutna opozorila?</string>
+    <string name="onboarding_screeen_3_text">Aplikacija omogoča, da lahko ročno vklopite ali izklopite prikaz trenutno aktualnih opozoril v primeru, da avtomatsko zaznavanje hoje v hribe ne bo delovalo pravilno. </string>
+
+    <string name="onboarding_screeen_4_header">Splošna opozorila</string>
+    <string name="onboarding_screeen_4_text"> Z izbiro območja v aplikaciji boste vedno prejemali splošna opozorila za izbrano območje, tudi če se ne nahajate v hribih.</string>
+
+    <string name="onboarding_screeen_5_header">Legenda</string>
+    <string name="onboarding_screeen_5_text">Aplikacija prikazuje 2 tipa opozoril, ki jih ločimo z ikonoma v legendi. \n \n
+        Trenutna opozorila se vam prikažejo samo med hojo v hribe. \n \n
+        Splošna opozorila so vam na voljo kadarkoli odprete aplikacijo. </string>
+
+    <string name="onboarding_screeen_6_header">Zgodovina opozoril</string>
+    <string name="onboarding_screeen_6_text">Vsa trenutna in splošna opozorila, ki ste jih prebrali,  so označena z zeleno kljukico in dostopna v mapi Zgodovina. </string>
+
+    <string name="onboarding_screeen_7_header">Dovoljenja</string>
+    <string name="onboarding_screeen_7_text">Za prikaz trenutnih opozoril je potrebno aplikaciji dovoliti dostop do pridobivanja lokacije v ozadju in dostop do svoje telesne dejavnosti.</string>
+
+
+
+
+
+
     <string name="title_activity_hiking_warnings">HikingWarnings</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
     <string name="weather_area_1">SI_JULIAN-ALPS_</string>
     <string name="weather_area_2">SI_JULIAN-ALPS_SOUTH-WEST_</string>
     <string name="weather_area_3">SI_KAMNIK-SAVINJA-ALPS_</string>

@@ -7,39 +7,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
         <ImageView
+            android:paddingTop="10sp"
+            android:id="@+id/imageExplain"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="20sp"
-            android:background="@drawable/ic_gorininora">
-
+android:layout_height="match_parent"
+            android:src="@drawable/obs1">
         </ImageView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:fontFamily="@font/redhattext_bold"
-            android:textColor="@color/black"
-            android:textSize="40sp"
-            android:text="GoraNiNora" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20sp"
-            android:textColor="@color/black"
-            android:singleLine="false"
-            android:fontFamily="@font/redhattext_semibold"
-            android:textSize="20sp"
-            android:text="@string/text_onboarding_screeen_1">
-
-        </TextView>
-
     </LinearLayout>
+
 
 
 </FrameLayout>

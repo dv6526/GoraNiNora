@@ -1,5 +1,6 @@
 package si.uni_lj.fri.pbd.GoraNiNora.fragments
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -8,16 +9,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import si.uni_lj.fri.pbd.GoraNiNora.*
 import si.uni_lj.fri.pbd.GoraNiNora.databinding.FragmentSettingsBinding
 import si.uni_lj.fri.pbd.GoraNiNora.databinding.FragmentSettingsBinding.inflate
+import si.uni_lj.fri.pbd.GoraNiNora.ui.OnboardingActivity
 
 
 class SettingsFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingsBinding
+    private lateinit var navodila: CardView
 
 
     companion object {
@@ -63,6 +67,14 @@ class SettingsFragment : Fragment() {
 
         setupSwitchState()
         setupSwitchOnClick()
+
+        navodila = binding.navodila
+        navodila.setOnClickListener { _ ->
+            val intent =
+                Intent(context, OnboardingActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 
