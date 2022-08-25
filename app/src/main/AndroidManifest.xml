@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="si.uni_lj.fri.pbd.sensecontext">
+    package="si.uni_lj.fri.pbd.GoraNiNora">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
@@ -18,30 +18,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SenseContext">
         <activity
-            android:name=".ui.HikingWarningsActivity"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.ui.HikingWarningsActivity"
             android:exported="false" />
         <activity
-            android:name=".HandlePermissions"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.ui.OnboardingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.OnboardingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.DetailsActivity"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.ui.DetailsActivity"
             android:exported="false" />
 
         <receiver
-            android:name=".Receivers.LocationUpdatesReceiver"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.Receivers.LocationUpdatesReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".Services.LocationUpdatesService"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.Services.LocationUpdatesService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".Receivers.DetectedTransitionReceiver"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.Receivers.DetectedTransitionReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
@@ -49,7 +46,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name="si.uni_lj.fri.pbd.GoraNiNora.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

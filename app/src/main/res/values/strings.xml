@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SenseContext</string>
+    <string name="app_name">GoraNiNora</string>
     <string name="channel_name">Zaznana sprememba aktivnosti.</string>
     <string name="channel_description">Uporabnik je obveščen o spremembi telesne aktivnosti.</string>
     <string name="channel_name_warning">Zaznana hoja v gorah.</string>
