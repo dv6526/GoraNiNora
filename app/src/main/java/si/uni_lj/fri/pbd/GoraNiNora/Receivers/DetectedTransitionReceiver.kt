@@ -32,8 +32,8 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
         const val CHANNEL_ID="si.uni_lj.fri.pbd.sensecontext.NEWS"
         const val NOTIFICATION_ID = 18
         // in seconds
-        var waitBeforeLocationUpdates = 350L
-        var locationUpdatesInterval = 350L
+        var waitBeforeLocationUpdates = 60L
+        var locationUpdatesInterval = 60L
     }
 
 
@@ -67,7 +67,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                     } else if (event.activityType == DetectedActivity.WALKING && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT || event.activityType == DetectedActivity.STILL && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         activityState = "NOT WALKING"
                         if (LocationUpdatesService.IS_RUNNING) {
-                            Toast.makeText(context, "Stopped Location Updates Service from transition receiver", Toast.LENGTH_LONG).show()
+                            //Toast.makeText(context, "Stopped Location Updates Service from transition receiver", Toast.LENGTH_LONG).show()
                             val i = Intent(context, LocationUpdatesService::class.java)
                             i.action = ACTION_STOP
                             context.startService(i)
@@ -75,7 +75,7 @@ class DetectedTransitionReceiver : BroadcastReceiver() {
                     }
                 }
                 Log.d(TAG, "Detected activity transition " + output.toString())
-                showNotification(output.toString(), context)
+                //showNotification(output.toString(), context)
             }
         }
     }

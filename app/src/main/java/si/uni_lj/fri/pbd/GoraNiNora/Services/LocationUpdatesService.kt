@@ -87,12 +87,12 @@ class LocationUpdatesService : Service() {
         startForeground(NOTIFICATION_ID, createNotification())
         startLocationUpdates(this)
         IS_RUNNING = true
-        Toast.makeText(this, "Started Location GPS Updates", Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Started Location GPS Updates", Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Toast.makeText(this, "Stopped Location GPS Updates", Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Stopped Location GPS Updates", Toast.LENGTH_LONG).show()
         removeLocationUpdates(this)
         user_is_hiking = false
         repository.user_hiking.postValue(false)

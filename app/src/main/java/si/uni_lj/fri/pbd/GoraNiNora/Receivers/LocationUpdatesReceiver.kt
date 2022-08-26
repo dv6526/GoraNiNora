@@ -80,14 +80,14 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                 if (timeDiff >= TimeUnit.SECONDS.toMillis(timeBetweenUpdates)) {
                     //Log.d(TAG, "Prev date $prevDate")
                     //Log.d(TAG, "Cur date $curDate")
-                    Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
+                    //Toast.makeText(context, location.latitude.toString() + " " + location.longitude.toString(), Toast.LENGTH_LONG).show()
                     Log.d(TAG, "Location update " + location.latitude.toString() + " " + location.longitude.toString())
                     var internetAvailable = checkForInternet(context)
-                    var isInsideArea = isInsideMountainsFence(46.345664175687425, 13.627491787033, context)
+                    var isInsideArea = isInsideMountainsFence(location.latitude, location.longitude, context)
                     if (isInsideArea && internetAvailable) {
                     //if (isInsideMountainsFence(location.latitude, location.longitude, context)) {
-                        //sendJobAPI(location.latitude, location.longitude, context)
-                        sendJobAPI(46.345664175687425, 13.627491787033, context) //this coordinate is inside av_area_id 2
+                        sendJobAPI(location.latitude, location.longitude, context)
+                        //sendJobAPI(46.345664175687425, 13.627491787033, context) //this coordinate is inside av_area_id 2
                     } else if(isInsideArea && !internetAvailable && location.hasAltitude()) {
                         var elevation = location.altitude
                         saveLocationDatabase(location.latitude, location.latitude, elevation, null, null, context)
@@ -232,6 +232,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                     val elevation = cont.read<Double>("$.value.features[0].attributes.MeanElevation")
                     val aspect = cont.read<Double>("$.value.features[0].attributes.MeanAspect")
                     Log.d(TAG, "ArcgisAPI update " + elevation.toString() + "m elevation, " + slope.toString() + " degree slope " + aspect.toString() + " degree aspect")
+                    /*
                     Handler(Looper.getMainLooper()).post(Runnable {
                         Toast.makeText(
                             context,
@@ -239,6 +240,7 @@ class LocationUpdatesReceiver : BroadcastReceiver() {
                             Toast.LENGTH_LONG
                         ).show()
                     })
+                     */
 
                     //save location to database
                     saveLocationDatabase(lat, lon, elevation, slope, aspect, context)
