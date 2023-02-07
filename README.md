@@ -4,7 +4,7 @@
 
 
 **GoraNiNora** je aplikacija za mobilne naprave Android in je bila razvita v okviru diplomske naloge. Namenjena je vsem, ki se pozimi odpravljajo v gore. 
-Glavni namen aplikacije je pošiljanje in prikaz kontekstno odvisnih sporočil. 
+Glavni namen aplikacije je pošiljanje in prikaz kontekstno odvisnih sporočil. Do datoteke APK lahko dostopate preko [povezave](https://drive.google.com/file/d/1OdhK4NInImpSacrmcWt2uFU7q77Ph6Yr/view?usp=sharing).
 
 ## Kako deluje?
 Aplikacija za zaznavanje konteksta uporabi **lokacijo** uporabnika ter trenutno **vreme** in **plazovni bilten**.
